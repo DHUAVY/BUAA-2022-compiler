@@ -12,11 +12,11 @@ public class ConstDefMediate {
     public static void ConstDefAnalysis() throws IOException {
         // ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal
 
-        Ident.ident();
+        IdentMediate.analysis();
 
         while( getWordMed(poiMed).type == Token.LBRACK ){ // {
             poiMed++;
-            Expression.ConstExp();
+            ExpressionMediate.ConstExp();
 
             if( getWordMed(poiMed).type == Token.RBRACK ){ // }
                 poiMed++;
@@ -27,7 +27,7 @@ public class ConstDefMediate {
             poiMed++;
         }
 
-        ConstInitVal.ConstInitValAnalysis();
+        ConstInitValMediate.ConstInitValAnalysis();
 
     }
 }

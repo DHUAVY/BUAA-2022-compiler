@@ -98,10 +98,7 @@ public class GrammaticalAnalysis {
         }
     }
 
-    public static void Number( ExpAnalyse e ) throws IOException{
-
-        e.addSymbol(getWord(poi).token, 1);
-
+    public static void Number() throws IOException{
         writeWord( getWord(poi) );
         poi++;
         writeGrammer("Number");

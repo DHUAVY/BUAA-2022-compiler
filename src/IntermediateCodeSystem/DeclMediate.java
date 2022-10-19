@@ -14,7 +14,7 @@ public class DeclMediate {
         if( getWordMed(poiMed).type == Token.CONSTTK ) {
             ConstDeclMediate.analysis();
         }else{
-            VarDecl.analysis();
+            VarDeclMediate.analysis();
         }
     }
     

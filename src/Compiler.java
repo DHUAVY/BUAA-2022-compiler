@@ -3,6 +3,7 @@ import FileController.FileControl;
 import GrammaticalSystem.CompUnit;
 import GrammaticalSystem.FuncDef;
 import GrammaticalSystem.GrammaticalAnalysis;
+import IntermediateCodeSystem.CompUnitMediate;
 import IntermediateCodeSystem.ExpAnalyse;
 import LexicalSystem.LexicalAnalysis;
 import SymbolTableSystem.FunctionTable;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 public class Compiler {
@@ -34,5 +36,9 @@ public class Compiler {
         }
 
         CompUnit.analysis();
+        System.out.println(ErrorHandling.wrong);
+        if( ErrorHandling.wrong ){
+            CompUnitMediate.analysis();
+        }
     }
 }

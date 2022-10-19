@@ -14,13 +14,13 @@ public class CompUnitMediate {
                 getWordMed(poiMed + 2 ).type != Token.LPARENT) &&
                 (getWordMed(poiMed + 2 ).type != 0 ) ){
             // 0 -> const, 2 !-> (
-            Decl.analysis();
+            DeclMediate.analysis();
         }
 
         while( getWordMed( poiMed + 1).type != Token.MAINTK && getWordMed( poiMed + 1).type != 0 ){
-            FuncDef.FuncDefAnalysis();
+            FuncDefMediate.analysis();
         }
 
-        MainFuncDef.Analysis();
+        MainFuncDefMediate.analysis();
     }
 }

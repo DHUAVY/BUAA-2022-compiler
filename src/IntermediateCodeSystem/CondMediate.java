@@ -4,6 +4,9 @@ import GrammaticalSystem.Expression;
 
 import java.io.IOException;
 
+import static IntermediateCodeSystem.ExpressionMediate.expStack;
+import static IntermediateCodeSystem.ExpressionMediate.expStackTop;
+
 public class CondMediate {
 
     public static void analysis() throws IOException {
@@ -13,7 +16,7 @@ public class CondMediate {
         expStack[expStackTop] = e;
         expStackTop++;
 
-        Expression.LOrExp(e);
+        ExpressionMediate.LOrExp(e);
 
         expStackTop--;
         expStack[expStackTop].quaternion();

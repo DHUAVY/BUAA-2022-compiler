@@ -25,7 +25,7 @@ public class ConstInitValMediate {
                 }
             }
         }else{
-            Expression.ConstExp();
+            ExpressionMediate.ConstExp();
         }
     }
 }

@@ -15,35 +15,22 @@ import static GrammaticalSystem.GrammaticalAnalysis.*;
 
 public class Expression {
 
-    public static ExpAnalyse[] expStack = new ExpAnalyse[100000]; // 当前正在处理的表达式栈。
-    public static int expStackTop = 0; // 栈内的元素数量。
-
     public static int Exp() throws IOException {
         int ret;
 
-        ExpAnalyse e = new ExpAnalyse();
-        expStack[expStackTop] = e;
-        expStackTop++;
-
-        ret = AddExp( e );
-
-        expStackTop--;
-        expStack[expStackTop].quaternion();
+        ret = AddExp();
 
         writeGrammer("Exp");
         return ret;
     }
 
-    public static int PrimaryExp( ExpAnalyse e ) throws IOException {
+    public static int PrimaryExp() throws IOException {
         // PrimaryExp → '(' Exp ')' | LVal | Number
         int ret = 0;
         if( getWord(poi).type == Token.LPARENT ){
             writeWord( getWord(poi) );
             poi++;
             ret = Exp();
-
-            ExpSymbol expSym = ExpAnalyse.expSymbolStack[--ExpAnalyse.expSymbolStackTop];
-            e.addSymbol( expSym.token, expSym.type);
 
             if( getWord(poi).type == Token.RPARENT ){
                 writeWord( getWord(poi) );
@@ -55,7 +42,7 @@ public class Expression {
             writeGrammer("PrimaryExp");
         }
         else if( getWord(poi).type == Token.INTCON ){
-            Number( e );
+            Number();
             writeGrammer("PrimaryExp");
             ret = 0; // 返回值为Number，因此一定为int类型。
         }
@@ -69,7 +56,7 @@ public class Expression {
         return ret;
     }
 
-    public static int UnaryExp( ExpAnalyse e ) throws IOException {
+    public static int UnaryExp() throws IOException {
         // UnaryExp → PrimaryExp
         // UnaryExp → Ident '(' [FuncRParams] ')'
         // UnaryExp → UnaryOp UnaryExp
@@ -128,113 +115,96 @@ public class Expression {
         }
         else if( getWord(poi).type == Token.PLUS || getWord(poi).type == Token.MINU || getWord(poi).type == Token.NOT ){
             UnaryOp();
-            UnaryExp( e );
+            UnaryExp();
             ret = 0; // 由于!仅出现在条件表达式中，因此此处可以推断直接为int类型。
         }
         else{
-            ret = PrimaryExp( e );
+            ret = PrimaryExp();
         }
 
         writeGrammer("UnaryExp");
         return ret;
     }
 
-    public static int MulExp(ExpAnalyse e) throws IOException {
+    public static int MulExp() throws IOException {
         int ret;
-        String str;
-        ret = UnaryExp( e );
+        ret = UnaryExp();
         writeGrammer("MulExp");
         while( getWord(poi).type == Token.MULT || getWord(poi).type == Token.DIV || getWord(poi).type == Token.MOD ){
-            str = getWord(poi).token;
 
             writeWord(getWord(poi));
             poi++;
-            UnaryExp(e);
-
-            e.addSymbol( str, 0);
+            UnaryExp();
 
             writeGrammer("MulExp");
         }
         return ret;
     }
 
-    public static int AddExp( ExpAnalyse e ) throws IOException {
+    public static int AddExp() throws IOException {
         int ret;
-        String str;
-        ret = MulExp( e );
+        ret = MulExp();
         writeGrammer("AddExp");
         while( getWord(poi).type == Token.PLUS || getWord(poi).type == Token.MINU ){
-            str = getWord(poi).token;
 
             writeWord(getWord(poi));
             poi++;
-            MulExp(e);
-
-            e.addSymbol( str, 0 );
+            MulExp();
 
             writeGrammer("AddExp");
         }
         return ret;
     }
 
-    public static void RelExp( ExpAnalyse e ) throws IOException {
-        AddExp( e );
+    public static void RelExp() throws IOException {
+        AddExp();
         writeGrammer("RelExp");
         while( getWord(poi).type == Token.LSS || getWord(poi).type == Token.GRE ||
                 getWord(poi).type == Token.GEQ || getWord(poi).type == Token.LEQ){
             writeWord(getWord(poi));
             poi++;
-            AddExp( e );
+            AddExp();
             writeGrammer("RelExp");
         }
     }
 
-    public static void EqExp( ExpAnalyse e ) throws IOException {
-        RelExp(e);
+    public static void EqExp() throws IOException {
+        RelExp();
         writeGrammer("EqExp");
         while(getWord(poi).type == Token.EQL || getWord(poi).type == Token.NEQ ){
             writeWord(getWord(poi));
             poi++;
-            RelExp(e);
+            RelExp();
             writeGrammer("EqExp");
         }
     }
 
-    public static void LAndExp(ExpAnalyse e) throws IOException {
+    public static void LAndExp() throws IOException {
         // LAndExp → EqExp | LAndExp '&&' EqExp
-        EqExp(e);
+        EqExp();
         writeGrammer("LAndExp");
         while(getWord(poi).type == Token.AND){
             writeWord(getWord(poi));
             poi++;
-            EqExp(e);
+            EqExp();
             writeGrammer("LAndExp");
         }
     }
 
-    public static void LOrExp(ExpAnalyse e) throws IOException {
+    public static void LOrExp() throws IOException {
         // LOrExp → LAndExp | LOrExp '||' LAndExp
-        LAndExp(e);
+        LAndExp();
         writeGrammer("LOrExp");
         while(getWord(poi).type == Token.OR){
             writeWord(getWord(poi));
             poi++;
-            LAndExp(e);
+            LAndExp();
             writeGrammer("LOrExp");
         }
     }
 
     public static void ConstExp() throws IOException{
-
-        ExpAnalyse e = new ExpAnalyse();
-        expStack[expStackTop] = e;
-        expStackTop++;
-
-        AddExp( e );
-
-        expStackTop--;
-        expStack[expStackTop].quaternion();
-
+        AddExp();
         writeGrammer("ConstExp");
     }
 }

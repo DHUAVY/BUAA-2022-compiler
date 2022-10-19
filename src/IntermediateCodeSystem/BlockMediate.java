@@ -8,17 +8,15 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
 
 public class BlockMediate {
-    public static int analysis( boolean dimen ) throws IOException {
+    public static void analysis() throws IOException {
         // Block → '{' { BlockItem } '}'
         int ret = 0;
         if( getWordMed(poiMed).type == Token.LBRACE ){ // {
             poiMed++;
             while( getWordMed(poiMed).type != Token.RBRACE ){ // 当下一个字符不为'}'时，进入BlockItem
-                ret = BlockItemMediate.analysis();
+                BlockItemMediate.analysis();
             }
             poiMed++;
         }
-
-        return ret;
     }
 }

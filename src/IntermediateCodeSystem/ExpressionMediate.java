@@ -5,130 +5,77 @@ import SymbolTableSystem.FunctionTable;
 
 import java.io.IOException;
 
-import static IntermediateCodeSystem.IntermediateCode.getWordMed;
-import static IntermediateCodeSystem.IntermediateCode.poiMed;
+import static IntermediateCodeSystem.IntermediateCode.*;
 
 
 public class ExpressionMediate {
     public static ExpAnalyse[] expStack = new ExpAnalyse[100000]; // 当前正在处理的表达式栈。
     public static int expStackTop = 0; // 栈内的元素数量。
 
-    public static int Exp() throws IOException {
-        int ret;
-
+    public static void Exp() throws IOException {
         ExpAnalyse e = new ExpAnalyse();
         expStack[expStackTop] = e;
         expStackTop++;
 
-        ret = AddExp( e );
+        AddExp( e );
 
         expStackTop--;
         expStack[expStackTop].quaternion();
-        
-        return ret;
     }
 
-    public static int PrimaryExp( ExpAnalyse e ) throws IOException {
+    public static void PrimaryExp( ExpAnalyse e ) throws IOException {
         // PrimaryExp → '(' Exp ')' | LVal | Number
         int ret = 0;
         if( getWordMed(poiMed).type == Token.LPARENT ){
 
             poiMed++;
-            ret = Exp();
+            Exp();
 
             ExpSymbol expSym = ExpAnalyse.expSymbolStack[--ExpAnalyse.expSymbolStackTop];
             e.addSymbol( expSym.token, expSym.type);
 
             if( getWordMed(poiMed).type == Token.RPARENT ){
-                writeWord( getWordMed(poiMed) );
                 poiMed++;
-            }else{
-                WithOutParenError.analyse( poiMed - 1);
             }
-
-            writeGrammer("PrimaryExp");
         }
         else if( getWordMed(poiMed).type == Token.INTCON ){
-            Number( e );
-            writeGrammer("PrimaryExp");
-            ret = 0; // 返回值为Number，因此一定为int类型。
+            NumberMed( e );
         }
         else if( getWordMed(poiMed).type == Token.IDENFR ){
-            ret = LVal.Analysis( 0 );
-            writeGrammer("PrimaryExp");
+            LValMediate.analysis();
         }
-        else{
-            wrong();
-        }
-        return ret;
     }
 
-    public static int UnaryExp( ExpAnalyse e ) throws IOException {
+    public static void UnaryExp( ExpAnalyse e ) throws IOException {
         // UnaryExp → PrimaryExp
         // UnaryExp → Ident '(' [FuncRParams] ')'
         // UnaryExp → UnaryOp UnaryExp
-        int ret = 0;
-        int withOutParen = 0;
-        Lexical lex;
 
         if( getWordMed(poiMed).type == Token.IDENFR && getWordMed(poiMed+1).type == Token.LPARENT ){
-            lex = getWordMed(poiMed);
 
-
-            Ident.ident();
+            IdentMediate.analysis();
             if( getWordMed(poiMed).type == Token.LPARENT ) {
 
                 poiMed++;
 
-                if( getWordMed(poiMed).type == Token.RPARENT ){
-                    FuncParamNumError.analyse( lex, 0 ); // 如果没有参数，直接检查。
+                while (getWordMed(poiMed).type != Token.RPARENT) {
+                    FuncRParamsMediate.analysis(); // 如果有参数，在下一阶段中查明参数的个数后检查。
                 }
-
-                while( getWordMed(poiMed).type != Token.RPARENT ){
-
-                    if( getWordMed(poiMed).type != Token.LPARENT &&
-                            getWordMed(poiMed).type != Token.IDENFR &&
-                            getWordMed(poiMed).type != Token.INTCON &&
-                            getWordMed(poiMed).type != Token.PLUS &&
-                            getWordMed(poiMed).type != Token.MINU)
-                    {
-                        break;
-                    }
-
-                    FuncRParams.Analysis( lex, flag ); // 如果有参数，在下一阶段中查明参数的个数后检查。
-                }
-
-
-
                 poiMed++;
-
-                if( !flag ){
-                    if( FunctionTable.directory.get(lex.token).type == 1 ){ // 此处调用函数，如果为void则返回-1，反之则返回0。
-                        ret = 0;
-                    } else{
-                        ret = -1;
-                    }
-                }else{
-                    ret = -1;
-                }
             }
         }
         else if( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU || getWordMed(poiMed).type == Token.NOT ){
-            UnaryOp();
+            UnaryOpMed();
             UnaryExp( e );
-            ret = 0; // 由于!仅出现在条件表达式中，因此此处可以推断直接为int类型。
         }
         else{
-            ret = PrimaryExp( e );
+            PrimaryExp( e );
         }
-
-        return ret;
     }
 
-    public static int MulExp(ExpAnalyse e) throws IOException {
-        int ret;
+    public static void MulExp(ExpAnalyse e) throws IOException {
         String str;
-        ret = UnaryExp( e );
+        UnaryExp( e );
         while( getWordMed(poiMed).type == Token.MULT || getWordMed(poiMed).type == Token.DIV || getWordMed(poiMed).type == Token.MOD ){
             str = getWordMed(poiMed).token;
 
@@ -136,25 +83,18 @@ public class ExpressionMediate {
             UnaryExp(e);
 
             e.addSymbol( str, 0);
-
         }
-        return ret;
     }
 
-    public static int AddExp( ExpAnalyse e ) throws IOException {
-        int ret;
+    public static void AddExp( ExpAnalyse e ) throws IOException {
         String str;
-        ret = MulExp( e );
+        MulExp( e );
         while( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU ){
             str = getWordMed(poiMed).token;
-
             poiMed++;
             MulExp(e);
-
             e.addSymbol( str, 0 );
-
         }
-        return ret;
     }
 
     public static void RelExp( ExpAnalyse e ) throws IOException {

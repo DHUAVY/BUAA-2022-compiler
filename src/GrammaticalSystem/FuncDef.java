@@ -110,6 +110,7 @@ public class FuncDef {
         func.paramNum = nowFuncParamNum;
         for( int i = 0; i < nowFuncParamNum; i++ ){
             func.paramList[i] = nowFuncParamList[i];
+            nowFuncParamList[i] = 0;
         }
         nowFuncParamNum = 0; // 复制当前的函数的参数信息。
 

@@ -16,11 +16,11 @@ public class ConstDeclMediate {
 
         BTypeMed();
 
-        ConstDef.ConstDefAnalysis();
+        ConstDefMediate.ConstDefAnalysis();
 
         while( getWordMed(poiMed).type == Token.COMMA){
             poiMed++;
-            ConstDef.ConstDefAnalysis();
+            ConstDefMediate.ConstDefAnalysis();
         }
 
         if( getWordMed(poiMed).type == Token.SEMICN ){

@@ -13,6 +13,8 @@ public class ErrorHandling {
         g = 7, h = 8, i = 9, j = 10, k = 11, l = 12, m = 13;
 
     public static String errorFileName = FileControl.ErrorHandlingSystemFileName;
+
+    public static boolean wrong = false; // 判断当前文件是否有错。
     public static boolean[] errorList = new boolean[500000]; // 默认值为false，当对应行进行报错后改为true，以此减少重复报错。
 
     public static String getType( int typeNumber ){
@@ -50,6 +52,7 @@ public class ErrorHandling {
     }
 
     public static void writeError( int lineNumber, int typeNumber ) throws IOException { // 向文件中进行写入。
+        wrong = true;
         if( !errorList[lineNumber] ){
             errorList[lineNumber] = true;
             String str = lineNumber + " " + getType(typeNumber) + "\n";
