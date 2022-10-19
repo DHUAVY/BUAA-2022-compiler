@@ -1,32 +1,48 @@
 package IntermediateCodeSystem;
 
-class ExpSymbol{
-    public int type; // 0 -> op, 1-> ident
-    public String token;
-
-    public ExpSymbol( String token, int type ){
-        this.type = type;
-        this.token = token;
-    }
-
-    @Override
-    public String toString(){
-        String str = "{ type = " + this.type + ", " + "token = " + this.token + " }";
-        return str;
-    }
-}
+import java.io.IOException;
 
 public class ExpAnalyse {
 
-    public static int poi = 0;
+    public int poi = 0;
 
-    public static ExpSymbol[] expTable = new ExpSymbol[100000];
+    public ExpSymbol[] expTable = new ExpSymbol[10000];
 
-    public static void addSymbol(  String token, int type ){
+    public static ExpSymbol[] expSymbolStack = new ExpSymbol[10000];
+    public static int expSymbolStackTop = 0;
+
+    public void addSymbol( String token, int type ){
         ExpSymbol exp = new ExpSymbol(token, type);
         expTable[ poi ] = exp;
         poi ++;
         System.out.println( exp );
     }
+
+    public void quaternion() throws IOException {
+        String str = "";
+        String token = "";
+
+        ExpSymbol[] stack = new ExpSymbol[100000];
+        int top = 0;
+
+        if( poi > 1 ){
+            for( int i = 0; i <= poi-1; i++ ){
+                if( expTable[i].type == 1 ){
+                    stack[top++] = expTable[i];
+                }else{
+                    token = TemporaryRegister.getFreeReg();
+                    str =  token + " = " + stack[--top].token + " " + expTable[i].token + " " + stack[--top].token + "\n";
+
+                    stack[top++] = new ExpSymbol(token, 1);
+                    IntermediateCode.writeIntermediateCode( str );
+                }
+            }
+            expSymbolStack[expSymbolStackTop++] = stack[top];
+        }else{
+            expSymbolStack[expSymbolStackTop++] = expTable[poi];
+        }
+
+    }
+
 
 }

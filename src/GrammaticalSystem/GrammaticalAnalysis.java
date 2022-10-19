@@ -98,9 +98,9 @@ public class GrammaticalAnalysis {
         }
     }
 
-    public static void Number() throws IOException{
+    public static void Number( ExpAnalyse e ) throws IOException{
 
-        ExpAnalyse.addSymbol(getWord(poi).token, 1);
+        e.addSymbol(getWord(poi).token, 1);
 
         writeWord( getWord(poi) );
         poi++;
