@@ -3,6 +3,7 @@ import FileController.FileControl;
 import GrammaticalSystem.CompUnit;
 import GrammaticalSystem.FuncDef;
 import GrammaticalSystem.GrammaticalAnalysis;
+import IntermediateCodeSystem.ExpAnalyse;
 import LexicalSystem.LexicalAnalysis;
 import SymbolTableSystem.FunctionTable;
 import SymbolTableSystem.Symbol;

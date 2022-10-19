@@ -3,6 +3,7 @@ package GrammaticalSystem;
 import ErrorHandlingSystem.NameRedefinitionError;
 import ErrorHandlingSystem.NameUndefinitionError;
 import FileController.FileControl;
+import IntermediateCodeSystem.ExpAnalyse;
 import LexicalSystem.Lexical;
 import LexicalSystem.LexicalAnalysis;
 import LexicalSystem.Token;
@@ -98,6 +99,9 @@ public class GrammaticalAnalysis {
     }
 
     public static void Number() throws IOException{
+
+        ExpAnalyse.addSymbol(getWord(poi).token, 1);
+
         writeWord( getWord(poi) );
         poi++;
         writeGrammer("Number");

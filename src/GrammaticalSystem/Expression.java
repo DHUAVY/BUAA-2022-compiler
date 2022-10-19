@@ -3,6 +3,8 @@ import ErrorHandlingSystem.ErrorHandling;
 import ErrorHandlingSystem.FuncParamNumError;
 import ErrorHandlingSystem.NameUndefinitionError;
 import ErrorHandlingSystem.WithOutParenError;
+import IntermediateCodeSystem.ExpAnalyse;
+import IntermediateCodeSystem.IntermediateCode;
 import LexicalSystem.Lexical;
 import LexicalSystem.Token;
 import SymbolTableSystem.FunctionTable;
@@ -15,6 +17,9 @@ public class Expression {
     public static int Exp() throws IOException {
         int ret;
         ret = AddExp();
+
+        ExpAnalyse.poi = 0;
+
         writeGrammer("Exp");
         return ret;
     }
@@ -121,12 +126,18 @@ public class Expression {
 
     public static int MulExp() throws IOException {
         int ret;
+        String str;
         ret = UnaryExp();
         writeGrammer("MulExp");
         while( getWord(poi).type == Token.MULT || getWord(poi).type == Token.DIV || getWord(poi).type == Token.MOD ){
+            str = getWord(poi).token;
+
             writeWord(getWord(poi));
             poi++;
             UnaryExp();
+
+            ExpAnalyse.addSymbol( str, 0);
+
             writeGrammer("MulExp");
         }
         return ret;
@@ -134,12 +145,19 @@ public class Expression {
 
     public static int AddExp() throws IOException {
         int ret;
+        String str;
         ret = MulExp();
         writeGrammer("AddExp");
         while( getWord(poi).type == Token.PLUS || getWord(poi).type == Token.MINU ){
+            str = getWord(poi).token;
+
             writeWord(getWord(poi));
             poi++;
             MulExp();
+
+            ExpAnalyse.addSymbol( str, 0 );
+            ExpAnalyse.poi ++;
+
             writeGrammer("AddExp");
         }
         return ret;
