@@ -86,7 +86,6 @@ public class StmtMediate {
             // Stmt → LVal '=' Exp ';'
             // Stmt → LVal '=' 'getint''('')'';'
             LValMediate.analysis();
-
             poiMed++;
 
             if( getWordMed(poiMed).type == Token.GETINTTK ){

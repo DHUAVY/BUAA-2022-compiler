@@ -13,13 +13,14 @@ public class CondMediate {
         // Cond → LOrExp
 
         ExpAnalyse e = new ExpAnalyse();
-        expStack[expStackTop] = e;
-        expStackTop++;
+//        expStack[expStackTop] = e;
+//        expStackTop++;
 
         ExpressionMediate.LOrExp(e);
 
-        expStackTop--;
-        expStack[expStackTop].quaternion();
+//        expStackTop--;
+//        expStack[expStackTop].quaternion();
+        e.quaternion();
 
     }
 }

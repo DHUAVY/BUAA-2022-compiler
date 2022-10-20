@@ -8,9 +8,10 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
 public class IdentMediate {
 
-    public static void analysis() throws IOException {
+    public static String analysis() throws IOException {
         if( getWordMed(poiMed).type == Token.IDENFR ){
             poiMed++;
         }
+        return getWordMed(poiMed-1).token;
     }
 }

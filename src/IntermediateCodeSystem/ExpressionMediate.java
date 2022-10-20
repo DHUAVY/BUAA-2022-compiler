@@ -84,8 +84,8 @@ public class ExpressionMediate {
         ExpSymbol expsym;
         ExpAnalyse e = new ExpAnalyse();
 
-        expStack[expStackTop] = e;
-        expStackTop++;
+//        expStack[expStackTop] = e;
+//        expStackTop++;
 
         MulExp( e );
 
@@ -96,8 +96,9 @@ public class ExpressionMediate {
             e.addSymbol( str, 0 );
         }
 
-        expStackTop--;
-        expsym = expStack[expStackTop].quaternion();
+//        expStackTop--;
+//        expsym = expStack[expStackTop].quaternion();
+        expsym = e.quaternion();
 
         return expsym;
     }
@@ -137,16 +138,11 @@ public class ExpressionMediate {
         }
     }
 
-    public static void ConstExp() throws IOException{
+    public static ExpSymbol ConstExp() throws IOException{
 
-        ExpAnalyse e = new ExpAnalyse();
-        expStack[expStackTop] = e;
-        expStackTop++;
+        ExpSymbol expsym;
+        expsym = AddExp();
 
-        AddExp();
-
-        expStackTop--;
-        expStack[expStackTop].quaternion();
-
+        return expsym;
     }
 }

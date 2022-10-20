@@ -40,7 +40,7 @@ public class ExpAnalyse {
             }
             return stack[--top];
         }else{
-            return expTable[poi];
+            return expTable[poi-1];
         }
 
     }

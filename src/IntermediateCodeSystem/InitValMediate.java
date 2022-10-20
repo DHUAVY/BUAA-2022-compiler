@@ -9,6 +9,9 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
 public class InitValMediate {
 
+    public static int numExp = 0;
+    public static String[] initValList = new String[10000];
+
     public static void analysis() throws IOException {
         // InitVal → Exp | '{' [ InitVal { ',' InitVal } ] '}'
         if( getWordMed(poiMed).type == Token.LBRACE ){
@@ -26,7 +29,7 @@ public class InitValMediate {
                 }
             }
         }else{
-            ExpressionMediate.Exp();
+            initValList[numExp++] = ExpressionMediate.Exp().token;
         }
     }
 }

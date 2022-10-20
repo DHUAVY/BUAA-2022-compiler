@@ -8,24 +8,27 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
 public class ConstInitValMediate {
 
-    public static void ConstInitValAnalysis() throws IOException {
+    public static int numExp = 0;
+    public static String[] initValList = new String[10000];
+
+    public static void analyse() throws IOException {
         // ConstInitVal → ConstExp | '{' [ ConstInitVal { ',' ConstInitVal } ] '}'
         if( getWordMed(poiMed).type == Token.LBRACE ){
             poiMed++;
             if( getWordMed(poiMed).type == Token.RBRACE ){
                 poiMed++;
             }else{
-                ConstInitValAnalysis();
+                analyse();
                 while( getWordMed(poiMed).type == Token.COMMA){
                     poiMed++;
-                    ConstInitValAnalysis();
+                    analyse();
                 }
                 if( getWordMed(poiMed).type == Token.RBRACE ){
                     poiMed++;
                 }
             }
         }else{
-            ExpressionMediate.ConstExp();
+            initValList[numExp++] = ExpressionMediate.ConstExp().token;
         }
     }
 }
