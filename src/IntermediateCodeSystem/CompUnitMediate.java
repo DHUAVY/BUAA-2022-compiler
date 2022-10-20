@@ -10,6 +10,8 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 public class CompUnitMediate {
     public static void analysis() throws IOException {
 
+        SymbolTableMediate.init();
+
         while( (getWordMed(poiMed).type == Token.CONSTTK ||
                 getWordMed(poiMed + 2 ).type != Token.LPARENT) &&
                 (getWordMed(poiMed + 2 ).type != 0 ) ){
