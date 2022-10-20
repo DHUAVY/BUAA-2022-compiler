@@ -104,15 +104,17 @@ public class FuncDef {
         writeGrammer("FuncDef");
     }
 
-    public static void completeFuncInfo( Lexical lex ){
+    public static void completeFuncInfo( Lexical lex ){ // 复制当前的函数的参数信息。
 
         Function func = FunctionTable.directory.get( lex.token );
         func.paramNum = nowFuncParamNum;
+
         for( int i = 0; i < nowFuncParamNum; i++ ){
             func.paramList[i] = nowFuncParamList[i];
             nowFuncParamList[i] = 0;
         }
-        nowFuncParamNum = 0; // 复制当前的函数的参数信息。
+
+        nowFuncParamNum = 0;
 
     }
 }

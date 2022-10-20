@@ -36,9 +36,7 @@ public class Compiler {
         }
 
         CompUnit.analysis();
-        System.out.println(ErrorHandling.wrong);
-        if( ErrorHandling.wrong ){
-            CompUnitMediate.analysis();
-        }
+
+        CompUnitMediate.analysis();
     }
 }

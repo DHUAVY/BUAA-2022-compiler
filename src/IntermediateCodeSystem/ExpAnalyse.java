@@ -8,20 +8,19 @@ public class ExpAnalyse {
 
     public ExpSymbol[] expTable = new ExpSymbol[10000];
 
-    public static ExpSymbol[] expSymbolStack = new ExpSymbol[10000];
-    public static int expSymbolStackTop = 0;
-
     public void addSymbol( String token, int type ){
         ExpSymbol exp = new ExpSymbol(token, type);
         expTable[ poi ] = exp;
         poi ++;
-        System.out.println( exp );
+        //System.out.println( exp );
     }
 
-    public void quaternion() throws IOException {
+    public ExpSymbol quaternion() throws IOException {
         String str = "";
         String token = "";
 
+        ExpSymbol a;
+        ExpSymbol b;
         ExpSymbol[] stack = new ExpSymbol[100000];
         int top = 0;
 
@@ -31,15 +30,17 @@ public class ExpAnalyse {
                     stack[top++] = expTable[i];
                 }else{
                     token = TemporaryRegister.getFreeReg();
-                    str =  token + " = " + stack[--top].token + " " + expTable[i].token + " " + stack[--top].token + "\n";
+                    b = stack[--top];
+                    a = stack[--top];
+                    str =  token + " = " + a.token + " " + expTable[i].token + " " + b.token + "\n";
 
                     stack[top++] = new ExpSymbol(token, 1);
                     IntermediateCode.writeIntermediateCode( str );
                 }
             }
-            expSymbolStack[expSymbolStackTop++] = stack[top];
+            return stack[--top];
         }else{
-            expSymbolStack[expSymbolStackTop++] = expTable[poi];
+            return expTable[poi];
         }
 
     }

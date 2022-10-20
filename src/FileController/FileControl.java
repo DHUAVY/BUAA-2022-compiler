@@ -15,9 +15,9 @@ public class FileControl {
     public static String IntermediateCodeSystemFileName = "middle.txt";
 
     public static boolean LexicalSystemPrint = false;
-    public static boolean GrammaticalSystemPrint = true;
-    public static boolean ErrorHandlingSystemPrint = true;
-    public static boolean IntermediateCodeSystemPrint = false;
+    public static boolean GrammaticalSystemPrint = false;
+    public static boolean ErrorHandlingSystemPrint = false;
+    public static boolean IntermediateCodeSystemPrint = true;
 
     public static void fileMake() throws IOException {
         if( LexicalSystemPrint ){

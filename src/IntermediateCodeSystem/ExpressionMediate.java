@@ -1,7 +1,5 @@
 package IntermediateCodeSystem;
-import LexicalSystem.Lexical;
 import LexicalSystem.Token;
-import SymbolTableSystem.FunctionTable;
 
 import java.io.IOException;
 
@@ -12,26 +10,21 @@ public class ExpressionMediate {
     public static ExpAnalyse[] expStack = new ExpAnalyse[100000]; // 当前正在处理的表达式栈。
     public static int expStackTop = 0; // 栈内的元素数量。
 
-    public static void Exp() throws IOException {
-        ExpAnalyse e = new ExpAnalyse();
-        expStack[expStackTop] = e;
-        expStackTop++;
+    public static ExpSymbol Exp() throws IOException {
 
-        AddExp( e );
+        ExpSymbol expsym;
+        expsym = AddExp();
 
-        expStackTop--;
-        expStack[expStackTop].quaternion();
+        return expsym;
     }
 
     public static void PrimaryExp( ExpAnalyse e ) throws IOException {
         // PrimaryExp → '(' Exp ')' | LVal | Number
         int ret = 0;
         if( getWordMed(poiMed).type == Token.LPARENT ){
-
             poiMed++;
-            Exp();
-
-            ExpSymbol expSym = ExpAnalyse.expSymbolStack[--ExpAnalyse.expSymbolStackTop];
+            ExpSymbol expSym = Exp();
+//            System.out.println(expSym);
             e.addSymbol( expSym.token, expSym.type);
 
             if( getWordMed(poiMed).type == Token.RPARENT ){
@@ -86,23 +79,35 @@ public class ExpressionMediate {
         }
     }
 
-    public static void AddExp( ExpAnalyse e ) throws IOException {
+    public static ExpSymbol AddExp() throws IOException {
         String str;
+        ExpSymbol expsym;
+        ExpAnalyse e = new ExpAnalyse();
+
+        expStack[expStackTop] = e;
+        expStackTop++;
+
         MulExp( e );
+
         while( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU ){
             str = getWordMed(poiMed).token;
             poiMed++;
             MulExp(e);
             e.addSymbol( str, 0 );
         }
+
+        expStackTop--;
+        expsym = expStack[expStackTop].quaternion();
+
+        return expsym;
     }
 
     public static void RelExp( ExpAnalyse e ) throws IOException {
-        AddExp( e );
+        AddExp();
         while( getWordMed(poiMed).type == Token.LSS || getWordMed(poiMed).type == Token.GRE ||
                 getWordMed(poiMed).type == Token.GEQ || getWordMed(poiMed).type == Token.LEQ){
             poiMed++;
-            AddExp( e );
+            AddExp();
         }
     }
 
@@ -138,7 +143,7 @@ public class ExpressionMediate {
         expStack[expStackTop] = e;
         expStackTop++;
 
-        AddExp( e );
+        AddExp();
 
         expStackTop--;
         expStack[expStackTop].quaternion();
