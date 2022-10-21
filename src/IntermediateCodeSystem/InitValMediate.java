@@ -10,7 +10,7 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 public class InitValMediate {
 
     public static int numExp = 0;
-    public static String[] initValList = new String[10000];
+    public static ExpSymbol[] initValList = new ExpSymbol[10000];
 
     public static void analysis() throws IOException {
         // InitVal → Exp | '{' [ InitVal { ',' InitVal } ] '}'
@@ -29,7 +29,7 @@ public class InitValMediate {
                 }
             }
         }else{
-            initValList[numExp++] = ExpressionMediate.Exp().token;
+            initValList[numExp++] = ExpressionMediate.Exp();
         }
     }
 }

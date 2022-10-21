@@ -1,4 +1,6 @@
 package IntermediateCodeSystem;
+import GrammaticalSystem.GrammaticalAnalysis;
+
 import java.util.HashMap;
 
 public class SymbolTableMediate {
@@ -26,5 +28,22 @@ public class SymbolTableMediate {
         this.directory.put( token, newSymbol );
         return newSymbol;
 
+    }
+
+    public SymbolMediate findSymbol( String token ){
+
+        SymbolMediate sm = new SymbolMediate();
+        int dimension = nowMediateDimension;
+        while( dimension != -1 ){
+
+            sm = symbolTableMediateList[dimension].directory.get( token );
+            if( sm == null ){
+                // 如果在当前维度的单词表中未得到对应的声明，则寻找上一维度。
+                dimension = symbolTableMediateList[dimension].fatherId;
+            }else{
+                return sm;
+            }
+        }
+        return sm;
     }
 }

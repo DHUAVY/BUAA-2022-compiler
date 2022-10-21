@@ -43,7 +43,7 @@ public class IntermediateCode {
     }
 
     public static void NumberMed( ExpAnalyse e ) throws IOException{
-        e.addSymbol(getWordMed(poiMed).token, 1);
+        e.addExpSymbol(getWordMed(poiMed).token, 1, true);
         poiMed++;
     }
 

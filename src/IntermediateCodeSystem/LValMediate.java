@@ -9,14 +9,15 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
 public class LValMediate {
 
-    public static LValSym analysis() throws IOException {
+    public static lvalSym analysis() throws IOException {
         // LVal → Ident {'[' Exp ']'}
         int dim = 0;
         String poi = "";
         String token = "";
         String newReg = "";
-        ExpSymbol expsym1 = new ExpSymbol("", 1);
-        ExpSymbol expsym2 = new ExpSymbol("", 1);
+
+        ExpSymbol expsym1 = new ExpSymbol("", 1, false);
+        ExpSymbol expsym2 = new ExpSymbol("", 1, false);
 
         if( getWordMed(poiMed).type == Token.IDENFR ){
             token = getWordMed(poiMed).token; // 标识。
@@ -25,12 +26,12 @@ public class LValMediate {
         while( getWordMed(poiMed).type == Token.LBRACK ){
 
             dim ++;
-
             poiMed++;
             if( dim == 1 ){
-                expsym1 = ExpressionMediate.Exp();
-            }else if( dim == 2 ){
                 expsym2 = ExpressionMediate.Exp();
+            }
+            else if( dim == 2 ){
+                expsym1 = ExpressionMediate.Exp();
             }
 
             if( getWordMed(poiMed).type == Token.RBRACK ){
@@ -38,24 +39,31 @@ public class LValMediate {
             }
         }
 
-        if( dim == 1 ){
-            poi = expsym1.token;
-        }else if( dim == 2 ){
-            newReg = TemporaryRegister.getFreeReg();
-            String str = newReg + " = " + "";
+        if( dim == 0 ){
+            return new lvalSym( token, expsym2.token, expsym2.haveValue );
         }
-        return new LValSym( token, dim, poi );
+        else if( dim == 1 ){
+            return new lvalSym( token, expsym2.token, expsym2.haveValue );
+        }
+        else if( dim == 2 ){
+            if( )
+        }
+
+        return new lvalSym( token, dim, poi, dim );
     }
 }
 
-class LValSym{
+class lvalSym{
+    int dim; // 其中含有左括号的数量，也即选取的维度。
     String token;
-    int dim; // 当前的Lval是否为数组。
-    String poi; // 如果当前的Lval为数组，则其访问的位置。
+    String poi;
+    boolean haveValue;
 
-    public LValSym( String token, int dim, String poi ){
+    public lvalSym( String token, String poi, boolean haveValue, int dim ){
         this.dim = dim;
         this.poi = poi;
         this.token = token;
+        this.haveValue = haveValue;
     }
 }
+

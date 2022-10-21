@@ -46,6 +46,11 @@ public class ConstDefMediate {
             }
         }
 
+        symmed.type = dim;
+        symmed.dim2 = dim2;
+        symmed.dim1 = dim1;
+        // 维度信息
+
         if( getWordMed(poiMed).type == Token.ASSIGN ){
 
             poiMed++;
@@ -54,7 +59,6 @@ public class ConstDefMediate {
             if( dim == 0 ){
                 int value = Integer.parseInt( ConstInitValMediate.initValList[0] );
 
-                symmed.type = 0;
                 symmed.value = value;
                 // 完善符号表。
 
@@ -62,10 +66,6 @@ public class ConstDefMediate {
                 IntermediateCode.writeIntermediateCode(str);
             }
             else if( dim == 1 ) {
-
-                symmed.type = 1;
-                symmed.dim2 = dim2;
-                // 完善符号表。
 
                 str = "arr int " + ident + "[" + dim2 + "]"+ "\n"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
                 IntermediateCode.writeIntermediateCode(str);
@@ -81,11 +81,6 @@ public class ConstDefMediate {
                 }
             }
             else if( dim == 2 ){
-
-                symmed.type = 2;
-                symmed.dim2 = dim2;
-                symmed.dim1 = dim1;
-                // 完善符号表。
 
                 str = "arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]" + "\n"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
                 IntermediateCode.writeIntermediateCode(str);

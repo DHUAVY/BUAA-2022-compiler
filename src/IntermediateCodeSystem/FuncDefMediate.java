@@ -15,12 +15,12 @@ public class FuncDefMediate {
             poiMed++;
             if( getWordMed(poiMed).type == Token.RPARENT ){
                 poiMed++;
-                BlockMediate.analysis();
+                BlockMediate.analysis( false );
             }else{
                 FuncFParamsMediate.analysis();
                 if( getWordMed(poiMed).type == Token.RPARENT ){
                     poiMed++;
-                    BlockMediate.analysis();
+                    BlockMediate.analysis( false );
                 }
             }
         }

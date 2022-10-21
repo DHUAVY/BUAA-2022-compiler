@@ -5,13 +5,25 @@ public class SymbolMediate {
         public int id; // 当前单词对应的id，即poi。
         public int dimension; // 当前单词所在的维度。
         public String token; // 当前单词所对应的字符串。
-        public int type; // 0 -> a, 1 -> a[], 2 -> a[dim1][dim2], -1 -> func
         public boolean con; // 1 -> const, 0 -> var
-        public int value; // type = 0，则会有当前对应的value。
-        public boolean safe; // 当前单词的取值是否能够使用。非全局变量且未定义初值，函数形参等情况下即为不可使用。
+        // 基础信息
+
+        public int type; // 0 -> a, 1 -> a[], 2 -> a[dim1][dim2], -1 -> func
         public int dim1;
         public int dim2;
+        // 维度信息
+
+        public boolean safe; // 当前单词的取值是否能够使用。非全局变量且未定义初值，函数形参等情况下即为不可使用。
+        public int value; // type = 0，则会有当前对应的value。
         public int[] valueList = new int [10000];
         public boolean[] safeList = new boolean[10000];
+        // 取值信息
 
+        @Override
+        public String toString(){
+                String str = "{ \n id = " + this.id + ", dimension = " + this.dimension + ", token = " + this.token + ", con = " + this.con + "\n" +
+                                "type = " + this.type + ", dim1 = " + this.dim1 + ", dim2 = " + this.dim2 + ", safe = " + this.safe +
+                        "\n}";
+                return str;
+        }
 }

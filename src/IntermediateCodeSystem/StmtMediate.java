@@ -76,7 +76,7 @@ public class StmtMediate {
         }
         else if( getWordMed(poiMed).type == Token.LBRACE ){
             // Stmt → Block
-            BlockMediate.analysis();
+            BlockMediate.analysis( true );
         }
         else if( getWordMed(poiMed).type == Token.SEMICN ){
             // Stmt → ;

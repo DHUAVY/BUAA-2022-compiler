@@ -8,11 +8,31 @@ public class ExpAnalyse {
 
     public ExpSymbol[] expTable = new ExpSymbol[10000];
 
-    public void addSymbol( String token, int type ){
-        ExpSymbol exp = new ExpSymbol(token, type);
+    public void addExpSymbol( String token, int type, boolean haveValue ){
+        ExpSymbol exp = new ExpSymbol(token, type, haveValue);
         expTable[ poi ] = exp;
         poi ++;
-        //System.out.println( exp );
+//        System.out.println( exp );
+    }
+
+    public void addExpSymbol( ExpSymbol expsym ){
+        expTable[ poi ] = expsym;
+        poi ++;
+//        System.out.println( expsym );
+    }
+
+    public int calculate( String op, int a, int b ){
+        if( op.equals("+") ){
+            return a + b;
+        }else if( op.equals("-") ){
+            return a - b;
+        }else if( op.equals("*") ){
+            return a * b;
+        }else if( op.equals("/") ){
+            return a / b;
+        }else{
+            return a % b;
+        }
     }
 
     public ExpSymbol quaternion() throws IOException {
@@ -29,21 +49,33 @@ public class ExpAnalyse {
                 if( expTable[i].type == 1 ){
                     stack[top++] = expTable[i];
                 }else{
-                    token = TemporaryRegister.getFreeReg();
                     b = stack[--top];
                     a = stack[--top];
-                    str =  token + " = " + a.token + " " + expTable[i].token + " " + b.token + "\n";
+                    // 取得当前栈顶的两个操作数。
 
-                    stack[top++] = new ExpSymbol(token, 1);
-                    IntermediateCode.writeIntermediateCode( str );
+                    if( a.haveValue && b.haveValue ){ // 当前是可以直接计算的常数。
+                        String op = expTable[i].token;
+                        int ret;
+                        int aVal = Integer.parseInt( a.token );
+                        int bVal = Integer.parseInt( b.token );
+
+                        ret = calculate( op, aVal, bVal );
+                        stack[top++] = new ExpSymbol( String.valueOf(ret), 1, true);
+
+                        System.out.println( ret );
+                    }
+                    else{
+                        token = TemporaryRegister.getFreeReg();
+                        str =  token + " = " + a.token + " " + expTable[i].token + " " + b.token + "\n";
+
+                        stack[top++] = new ExpSymbol(token, 1, false);
+                        IntermediateCode.writeIntermediateCode( str );
+                    }
                 }
             }
             return stack[--top];
         }else{
             return expTable[poi-1];
         }
-
     }
-
-
 }

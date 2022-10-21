@@ -20,7 +20,7 @@ public class MainFuncDefMediate {
                     poiMed++;
                     if( getWordMed(poiMed).type == Token.RPARENT ){
                         poiMed++;
-                        BlockMediate.analysis();
+                        BlockMediate.analysis( true );
                     }
                 }
             }

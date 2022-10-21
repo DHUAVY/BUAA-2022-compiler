@@ -25,7 +25,7 @@ public class ExpressionMediate {
             poiMed++;
             ExpSymbol expSym = Exp();
 //            System.out.println(expSym);
-            e.addSymbol( expSym.token, expSym.type);
+            e.addExpSymbol( expSym );
 
             if( getWordMed(poiMed).type == Token.RPARENT ){
                 poiMed++;
@@ -70,12 +70,12 @@ public class ExpressionMediate {
         String str;
         UnaryExp( e );
         while( getWordMed(poiMed).type == Token.MULT || getWordMed(poiMed).type == Token.DIV || getWordMed(poiMed).type == Token.MOD ){
-            str = getWordMed(poiMed).token;
 
+            str = getWordMed(poiMed).token;
             poiMed++;
             UnaryExp(e);
 
-            e.addSymbol( str, 0);
+            e.addExpSymbol( str, 0, false);
         }
     }
 
@@ -84,20 +84,15 @@ public class ExpressionMediate {
         ExpSymbol expsym;
         ExpAnalyse e = new ExpAnalyse();
 
-//        expStack[expStackTop] = e;
-//        expStackTop++;
-
         MulExp( e );
 
         while( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU ){
             str = getWordMed(poiMed).token;
             poiMed++;
             MulExp(e);
-            e.addSymbol( str, 0 );
+            e.addExpSymbol( str, 0, false );
         }
 
-//        expStackTop--;
-//        expsym = expStack[expStackTop].quaternion();
         expsym = e.quaternion();
 
         return expsym;
