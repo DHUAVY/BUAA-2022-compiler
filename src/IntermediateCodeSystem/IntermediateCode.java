@@ -16,7 +16,13 @@ public class IntermediateCode {
     public static int poiMed = 0; // 当前单词的读取位置。
     public static String fileName = FileControl.IntermediateCodeSystemFileName;
 
+    public static int dimensionMediateNum = 0;
+    public static int nowMediateDimension = 0;
+    public static SymbolTableMediate[] symbolTableMediateList = new SymbolTableMediate[100000];
+
     public static void writeIntermediateCode( String str ) throws IOException { // 向文件中进行写入。
+
+        str = str + "\n";
 
         if( FileControl.IntermediateCodeSystemPrint ){
             Files.write(Paths.get(fileName), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);

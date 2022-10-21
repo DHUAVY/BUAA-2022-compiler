@@ -85,13 +85,13 @@ public class StmtMediate {
         else if( lvalEqualsExpJudge() ){
             // Stmt → LVal '=' Exp ';'
             // Stmt → LVal '=' 'getint''('')'';'
-            LValMediate.analysis();
+            lvalSym lvsym = LValMediate.analysis();
             poiMed++;
 
             if( getWordMed(poiMed).type == Token.GETINTTK ){
-                handWithGetint();
+                handWithGetint( lvsym );
             }else{
-                lvalEqualExp();
+                lvalEqualExp( lvsym );
             }
         }
         else{
@@ -103,8 +103,35 @@ public class StmtMediate {
         }
     }
 
-    public static void handWithGetint() throws IOException {
+    public static void handWithGetint( lvalSym lvsym ) throws IOException {
         // Stmt → LVal '=' 'getint''('')'';'
+
+        SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
+
+        if( lvsym.dim == 0 ){ // 变量维度为0。
+            symmed.safe = false;
+            symmed.value = 0;
+            String str = "scanf" + " " + symmed.token;
+            IntermediateCode.writeIntermediateCode( str );
+        }
+        else{
+            if( lvsym.haveValue ){ // 当前的poi是一个常量。
+                int poi = Integer.parseInt(lvsym.poi);
+                symmed.safeList[ poi ] = false;
+                symmed.value = 0;
+                String str = "scanf" + " " + lvsym.token + "[" + poi + "]";
+                IntermediateCode.writeIntermediateCode( str );
+            }
+            else{
+                for( int i = 0; i < 10000; i++ ){
+                    symmed.safeList[ i ] = false;
+                    symmed.value = 0;
+                }
+                String str = "scanf" + " " + lvsym.token + "[" + lvsym.poi + "]";
+                IntermediateCode.writeIntermediateCode( str );
+            }
+        }
+
         poiMed++;
         if( getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
@@ -117,9 +144,46 @@ public class StmtMediate {
         }
     }
 
-    public static void lvalEqualExp() throws IOException {
+    public static void lvalEqualExp( lvalSym lvsym ) throws IOException {
         // Stmt → LVal '=' Exp ';'
-        ExpressionMediate.Exp();
+        ExpSymbol exp = ExpressionMediate.Exp();
+        SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
+
+        if( lvsym.dim == 0 ){ // 变量维度为0。
+            if( exp.haveValue ){
+                symmed.safe = true;
+                symmed.value = Integer.parseInt( exp.value );
+            }
+            else{
+                symmed.safe = false;
+                symmed.value = 0;
+            }
+            String str = symmed.token + " = " + exp.value;
+            IntermediateCode.writeIntermediateCode( str );
+        }
+        else{
+            if( lvsym.haveValue ){ // 当前的poi是一个常量。
+                int poi = Integer.parseInt(lvsym.poi);
+                if( exp.haveValue ){
+                    symmed.safeList[ poi ] = true;
+                    symmed.valueList[ poi ] = Integer.parseInt( exp.value );
+                }
+                else{
+                    symmed.safeList[ poi ] = false;
+                    symmed.value = 0;
+                }
+                String str = lvsym.token + "[" + poi + "]" + " = " + exp.value;
+                IntermediateCode.writeIntermediateCode( str );
+            }
+            else{
+                for( int i = 0; i < 10000; i++ ){
+                    symmed.safeList[ i ] = false;
+                    symmed.value = 0;
+                }
+                String str = lvsym.token + "[" + lvsym.poi + "]" + " = " + exp.value;
+                IntermediateCode.writeIntermediateCode( str );
+            }
+        }
         if( getWordMed(poiMed).type == Token.SEMICN ){
             poiMed++;
         }

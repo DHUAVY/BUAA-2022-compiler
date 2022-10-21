@@ -1,6 +1,4 @@
 package IntermediateCodeSystem;
-import GrammaticalSystem.GrammaticalAnalysis;
-
 import java.util.HashMap;
 
 public class SymbolTableMediate {
@@ -9,12 +7,10 @@ public class SymbolTableMediate {
     public int fatherId; // 当前符号表的父id。
     public HashMap<String, SymbolMediate> directory = new HashMap<>();
 
-    public static SymbolTableMediate[] symbolTableMediateList = new SymbolTableMediate[100000];
-    public static int dimensionMediateNum = 0;
-    public static int nowMediateDimension = 0;
-
     public static void init(){
-        symbolTableMediateList[0] = new SymbolTableMediate( 0, -1 ); // 建立全局变量的符号表。
+        IntermediateCode.symbolTableMediateList[0] = new SymbolTableMediate( 0, -1 ); // 建立全局变量的符号表。
+        IntermediateCode.dimensionMediateNum = 1;
+        IntermediateCode.nowMediateDimension = 0;
     }
 
     public SymbolTableMediate( int id, int fatherId ){
@@ -30,16 +26,16 @@ public class SymbolTableMediate {
 
     }
 
-    public SymbolMediate findSymbol( String token ){
+    public static SymbolMediate findSymbol( String token ){
 
         SymbolMediate sm = new SymbolMediate();
-        int dimension = nowMediateDimension;
+        int dimension = IntermediateCode.nowMediateDimension;
         while( dimension != -1 ){
 
-            sm = symbolTableMediateList[dimension].directory.get( token );
+            sm = IntermediateCode.symbolTableMediateList[dimension].directory.get( token );
             if( sm == null ){
                 // 如果在当前维度的单词表中未得到对应的声明，则寻找上一维度。
-                dimension = symbolTableMediateList[dimension].fatherId;
+                dimension = IntermediateCode.symbolTableMediateList[dimension].fatherId;
             }else{
                 return sm;
             }

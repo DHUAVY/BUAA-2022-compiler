@@ -6,16 +6,11 @@ import java.io.IOException;
 
 import static IntermediateCodeSystem.IntermediateCode.getWordMed;
 import static IntermediateCodeSystem.IntermediateCode.poiMed;
-import static IntermediateCodeSystem.SymbolTableMediate.nowMediateDimension;
-import static IntermediateCodeSystem.SymbolTableMediate.symbolTableMediateList;
 
 public class VarDefMediate {
 
     public static void analysis() throws IOException {
         // VarDef → Ident { '[' ConstExp ']' } | Ident { '[' ConstExp ']' } '=' InitVal
-
-        SymbolMediate symmed;
-
         int dim = 0;
         // a[dim1][dim2]
         String dim1 = "0";
@@ -27,10 +22,11 @@ public class VarDefMediate {
 
         ident = IdentMediate.analysis();
 
-        symmed = symbolTableMediateList[nowMediateDimension].addSymbol( ident );
+        SymbolMediate symmed = IntermediateCode.symbolTableMediateList[IntermediateCode.nowMediateDimension].addSymbol( ident );
+        symmed.token = ident;
         symmed.con = false;
         symmed.id = poiMed - 1;
-        symmed.dimension = nowMediateDimension;
+        symmed.dimension = IntermediateCode.nowMediateDimension;
         // 基础信息。
 
         while( getWordMed(poiMed).type == Token.LBRACK ){
@@ -40,9 +36,9 @@ public class VarDefMediate {
             expsym = ExpressionMediate.ConstExp();
 
             if( dim == 1 ){
-                dim2 = expsym.token;
+                dim2 = expsym.value;
             }else{
-                dim1 = expsym.token;
+                dim1 = expsym.value;
             }
 
             if( getWordMed(poiMed).type == Token.RBRACK ){
@@ -59,25 +55,25 @@ public class VarDefMediate {
             poiMed++;
             InitValMediate.analysis();
             if( dim == 0 ){
-                str = "var int " + ident + " = " + InitValMediate.initValList[0].token + "\n";
+                str = "var int " + ident + " = " + InitValMediate.initValList[0].value + "\n";
 
                 if( InitValMediate.initValList[0].haveValue ){
                     symmed.safe = true;
-                    symmed.value = Integer.parseInt( InitValMediate.initValList[0].token );
+                    symmed.value = Integer.parseInt( InitValMediate.initValList[0].value );
                 }
 
                 IntermediateCode.writeIntermediateCode(str);
             }
             else if( dim == 1 || dim == 2 ){
-                str = "arr int " + ident + "[" + InitValMediate.numExp + "]"+ "\n"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
+                str = "arr int " + ident + "[" + InitValMediate.numExp + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
                 IntermediateCode.writeIntermediateCode(str);
 
                 for( int i = 0; i < InitValMediate.numExp; i++ ){
-                    str = ident + "[" + i + "]" + " = " + InitValMediate.initValList[i].token + "\n";
+                    str = ident + "[" + i + "]" + " = " + InitValMediate.initValList[i].value;
 
                     if( InitValMediate.initValList[i].haveValue ){
                         symmed.safeList[i] = true;
-                        symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[0].token );
+                        symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[0].value );
                     }
 
                     IntermediateCode.writeIntermediateCode(str);
@@ -88,15 +84,15 @@ public class VarDefMediate {
         }
         else{ // 无初始赋值
             if( dim == 0 ){
-                str = "var int " + ident + "\n";
-                if( nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
+                str = "var int " + ident;
+                if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
                     symmed.safe = true;
                     symmed.value = 0;
                 }
             }
             else if( dim == 1 ){
-                str = "arr int " + ident + "[" + dim2 + "]"+ "\n";
-                if( nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
+                str = "arr int " + ident + "[" + dim2 + "]";
+                if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
                     for( int i = 0; i < symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;
@@ -104,8 +100,8 @@ public class VarDefMediate {
                 }
             }
             else if( dim == 2 ){
-                str = "arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]"+ "\n";
-                if( nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
+                str = "arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]";
+                if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
                     for( int i = 0; i < symmed.dim2 * symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;
@@ -114,5 +110,6 @@ public class VarDefMediate {
             }
             IntermediateCode.writeIntermediateCode(str);
         }
+        System.out.println( symmed );
     }
 }

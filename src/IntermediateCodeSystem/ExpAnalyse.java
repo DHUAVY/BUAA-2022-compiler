@@ -54,10 +54,10 @@ public class ExpAnalyse {
                     // 取得当前栈顶的两个操作数。
 
                     if( a.haveValue && b.haveValue ){ // 当前是可以直接计算的常数。
-                        String op = expTable[i].token;
+                        String op = expTable[i].value;
                         int ret;
-                        int aVal = Integer.parseInt( a.token );
-                        int bVal = Integer.parseInt( b.token );
+                        int aVal = Integer.parseInt( a.value );
+                        int bVal = Integer.parseInt( b.value );
 
                         ret = calculate( op, aVal, bVal );
                         stack[top++] = new ExpSymbol( String.valueOf(ret), 1, true);
@@ -66,7 +66,7 @@ public class ExpAnalyse {
                     }
                     else{
                         token = TemporaryRegister.getFreeReg();
-                        str =  token + " = " + a.token + " " + expTable[i].token + " " + b.token + "\n";
+                        str =  token + " = " + a.value + " " + expTable[i].value + " " + b.value;
 
                         stack[top++] = new ExpSymbol(token, 1, false);
                         IntermediateCode.writeIntermediateCode( str );

@@ -31,11 +31,44 @@ public class ExpressionMediate {
                 poiMed++;
             }
         }
+
         else if( getWordMed(poiMed).type == Token.INTCON ){
             NumberMed( e );
         }
+
         else if( getWordMed(poiMed).type == Token.IDENFR ){
-            LValMediate.analysis();
+
+            lvalSym lvsym = LValMediate.analysis();
+            SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
+
+            if( lvsym.dim == 0 ){ // 变量维度为0。
+                if( symmed.safe ){
+                    e.addExpSymbol(String.valueOf( symmed.value ), 1, true);
+                }
+                else{
+                    e.addExpSymbol( lvsym.token, 1, false);
+                }
+            }
+            else{
+                if( lvsym.haveValue ){ // 当前的poi是一个常量。
+                    int poi = Integer.parseInt(lvsym.poi);
+                    if( symmed.safeList[ poi ] ){
+                        e.addExpSymbol( String.valueOf( symmed.valueList[poi] ), 1, true);
+                    }
+                    else{
+                        String reg = TemporaryRegister.getFreeReg();
+                        String str = reg + " = " + symmed.token + "[" + lvsym.poi + "]";
+                        IntermediateCode.writeIntermediateCode( str );
+                        e.addExpSymbol( reg, 1, false);
+                    }
+                }
+                else{
+                    String reg = TemporaryRegister.getFreeReg();
+                    String str = reg + " = " + symmed.token + "[" + lvsym.poi + "]";
+                    IntermediateCode.writeIntermediateCode( str );
+                    e.addExpSymbol( reg, 1, false);
+                }
+            }
         }
     }
 

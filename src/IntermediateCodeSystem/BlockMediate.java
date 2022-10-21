@@ -15,9 +15,10 @@ public class BlockMediate {
 
         if( dimension ){
             // 添加新的dimension。
-            symbolTableMediateList[dimensionMediateNum] = new SymbolTableMediate( dimensionMediateNum, nowMediateDimension );
-            nowMediateDimension = dimensionMediateNum;
-            dimensionMediateNum++;
+            IntermediateCode.symbolTableMediateList[IntermediateCode.dimensionMediateNum] =
+                    new SymbolTableMediate( IntermediateCode.dimensionMediateNum, IntermediateCode.nowMediateDimension );
+            IntermediateCode.nowMediateDimension = IntermediateCode.dimensionMediateNum;
+            IntermediateCode.dimensionMediateNum++;
         }
 
         if( getWordMed(poiMed).type == Token.LBRACE ){ // {
@@ -28,6 +29,6 @@ public class BlockMediate {
             poiMed++;
         }
 
-        nowMediateDimension = symbolTableMediateList[nowMediateDimension].fatherId; // 回退当前维度至其本身的父维度。
+        IntermediateCode.nowMediateDimension = IntermediateCode.symbolTableMediateList[IntermediateCode.nowMediateDimension].fatherId; // 回退当前维度至其本身的父维度。
     }
 }

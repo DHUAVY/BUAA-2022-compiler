@@ -23,17 +23,17 @@ public class ConstDefMediate {
 
         ident = IdentMediate.analysis();
 
-        symmed = symbolTableMediateList[nowMediateDimension].addSymbol( ident );
+        symmed = IntermediateCode.symbolTableMediateList[IntermediateCode.nowMediateDimension].addSymbol( ident );
         symmed.con = true;
         symmed.safe = true;
         symmed.id = poiMed - 1;
-        symmed.dimension = nowMediateDimension;
+        symmed.dimension = IntermediateCode.nowMediateDimension;
         // 在符号表中添加符号并完善信息。
 
         while( getWordMed(poiMed).type == Token.LBRACK ){ // {
             dim++;
             poiMed++;
-            str = ExpressionMediate.ConstExp().token;
+            str = ExpressionMediate.ConstExp().value;
 
             if( dim == 1 ){
                 dim2 = Integer.parseInt( str );
@@ -62,12 +62,12 @@ public class ConstDefMediate {
                 symmed.value = value;
                 // 完善符号表。
 
-                str = "var int " + ident + " = " + value + "\n";
+                str = "const var int " + ident + " = " + value;
                 IntermediateCode.writeIntermediateCode(str);
             }
             else if( dim == 1 ) {
 
-                str = "arr int " + ident + "[" + dim2 + "]"+ "\n"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
+                str = "const arr int " + ident + "[" + dim2 + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
                 IntermediateCode.writeIntermediateCode(str);
 
                 for( int i = 0; i < ConstInitValMediate.numExp; i++ ){
@@ -76,13 +76,13 @@ public class ConstDefMediate {
                     symmed.valueList[i] = Integer.parseInt(ConstInitValMediate.initValList[i]);
                     // 完善符号表。
 
-                    str = ident + "[" + i + "]" + " = " + ConstInitValMediate.initValList[i]+ "\n";
+                    str = ident + "[" + i + "]" + " = " + ConstInitValMediate.initValList[i];
                     IntermediateCode.writeIntermediateCode(str);
                 }
             }
             else if( dim == 2 ){
 
-                str = "arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]" + "\n"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
+                str = "const arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
                 IntermediateCode.writeIntermediateCode(str);
 
                 for( int i = 0; i < ConstInitValMediate.numExp; i++ ){
@@ -91,7 +91,7 @@ public class ConstDefMediate {
                     symmed.valueList[i] = Integer.parseInt(ConstInitValMediate.initValList[i]);
                     // 完善符号表。
 
-                    str = ident + "[" + i + "]" + " = " + ConstInitValMediate.initValList[i]+ "\n";
+                    str = ident + "[" + i + "]" + " = " + ConstInitValMediate.initValList[i];
                     IntermediateCode.writeIntermediateCode(str);
                 }
             }

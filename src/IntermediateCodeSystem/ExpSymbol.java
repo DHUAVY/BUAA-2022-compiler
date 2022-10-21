@@ -3,18 +3,18 @@ package IntermediateCodeSystem;
 public class ExpSymbol {
 
     public int type; // 0 -> op, 1-> ident
-    public String token;
+    public String value; // 当前的值、寄存器或变量等。
     public boolean haveValue; // 当前的取值是否为一个常量。
 
-    public ExpSymbol( String token, int type, boolean haveValue ){
+    public ExpSymbol( String value, int type, boolean haveValue ){
         this.type = type;
-        this.token = token;
+        this.value = value;
         this.haveValue = haveValue;
     }
 
     @Override
     public String toString(){
-        String str = "{ type = " + this.type + ", token = " + this.token + ", haveValue = " + this.haveValue + " }";
+        String str = "{ type = " + this.type + ", token = " + this.value + ", haveValue = " + this.haveValue + " }";
         return str;
     }
 }

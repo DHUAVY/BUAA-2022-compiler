@@ -28,7 +28,7 @@ public class ConstInitValMediate {
                 }
             }
         }else{
-            initValList[numExp++] = ExpressionMediate.ConstExp().token;
+            initValList[numExp++] = ExpressionMediate.ConstExp().value;
         }
     }
 }
