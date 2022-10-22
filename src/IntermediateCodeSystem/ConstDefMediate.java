@@ -28,6 +28,7 @@ public class ConstDefMediate {
         symmed.safe = true;
         symmed.id = poiMed - 1;
         symmed.dimension = IntermediateCode.nowMediateDimension;
+        symmed.token = ident;
         // 在符号表中添加符号并完善信息。
 
         while( getWordMed(poiMed).type == Token.LBRACK ){ // {
@@ -62,7 +63,7 @@ public class ConstDefMediate {
                 symmed.value = value;
                 // 完善符号表。
 
-                str = "const var int " + ident + " = " + value;
+                str = "const int " + ident + " = " + value;
                 IntermediateCode.writeIntermediateCode(str);
             }
             else if( dim == 1 ) {

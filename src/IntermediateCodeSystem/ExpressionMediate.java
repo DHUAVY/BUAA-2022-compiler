@@ -7,8 +7,10 @@ import static IntermediateCodeSystem.IntermediateCode.*;
 
 
 public class ExpressionMediate {
+
     public static ExpAnalyse[] expStack = new ExpAnalyse[100000]; // 当前正在处理的表达式栈。
     public static int expStackTop = 0; // 栈内的元素数量。
+    public static boolean plusMinus = true; // true -> +, false -> -
 
     public static ExpSymbol Exp() throws IOException {
 
@@ -78,6 +80,7 @@ public class ExpressionMediate {
         // UnaryExp → UnaryOp UnaryExp
 
         if( getWordMed(poiMed).type == Token.IDENFR && getWordMed(poiMed+1).type == Token.LPARENT ){
+//            plusMinus = true;
 
             IdentMediate.analysis();
             if( getWordMed(poiMed).type == Token.LPARENT ) {
@@ -91,11 +94,28 @@ public class ExpressionMediate {
             }
         }
         else if( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU || getWordMed(poiMed).type == Token.NOT ){
-            UnaryOpMed();
+//            int op = UnaryOpMed();
+//            judgeOp( op ); // 判断当前表达式的正负。
+//            e.plusMinus = plusMinus; // 为当前表达式赋值。
+
             UnaryExp( e );
         }
         else{
+//            plusMinus = true;
             PrimaryExp( e );
+        }
+    }
+
+    public static void judgeOp( int op ){
+        if( plusMinus ){ // +
+            if( op == Token.MINU ){ // -
+                plusMinus = false; // -
+            }
+        }
+        else{ // -
+            if( op == Token.MINU ){ // -
+                plusMinus = true; // +
+            }
         }
     }
 

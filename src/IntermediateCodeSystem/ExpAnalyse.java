@@ -5,6 +5,7 @@ import java.io.IOException;
 public class ExpAnalyse {
 
     public int poi = 0;
+//    public boolean plusMinus; // 当前表达式最后是正是负。  true + : false -
 
     public ExpSymbol[] expTable = new ExpSymbol[10000];
 

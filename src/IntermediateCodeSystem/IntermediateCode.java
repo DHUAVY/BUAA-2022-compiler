@@ -53,10 +53,11 @@ public class IntermediateCode {
         poiMed++;
     }
 
-    public static void UnaryOpMed() throws IOException{
+    public static int UnaryOpMed() throws IOException{
         if( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU || getWordMed(poiMed).type == Token.NOT){
             poiMed++;
         }
+        return getWordMed(poiMed).type;
     }
 
     public static Lexical getWordMed(int i ){ // 返回当前读到的单词。
