@@ -13,11 +13,13 @@ public class FileControl {
     public static String GrammaticalSystemFileName = "output.txt";
     public static String ErrorHandlingSystemFileName = "error.txt";
     public static String IntermediateCodeSystemFileName = "middle.txt";
+    public static String LlvmIrFileName = "llvm_ir.txt";
 
     public static boolean LexicalSystemPrint = false;
     public static boolean GrammaticalSystemPrint = false;
     public static boolean ErrorHandlingSystemPrint = false;
-    public static boolean IntermediateCodeSystemPrint = true;
+    public static boolean IntermediateCodeSystemPrint = false;
+    public static boolean LlvmIrFilePrint = true; // 生成LLVM IR代码。
 
     public static void fileMake() throws IOException {
         if( LexicalSystemPrint ){
@@ -32,6 +34,8 @@ public class FileControl {
         if( IntermediateCodeSystemPrint ){
             Files.write(Paths.get(IntermediateCodeSystemFileName), "".getBytes(StandardCharsets.UTF_8));
         }
-
+        if( LlvmIrFilePrint ){
+            Files.write(Paths.get(LlvmIrFileName), "".getBytes(StandardCharsets.UTF_8));
+        }
     }
 }

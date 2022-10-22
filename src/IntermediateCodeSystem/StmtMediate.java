@@ -1,7 +1,11 @@
 package IntermediateCodeSystem;
+import ErrorHandlingSystem.WithOutSemiconError;
+import GrammaticalSystem.Expression;
 import LexicalSystem.Token;
 import java.io.IOException;
 
+import static GrammaticalSystem.GrammaticalAnalysis.*;
+import static GrammaticalSystem.GrammaticalAnalysis.poi;
 import static IntermediateCodeSystem.IntermediateCode.getWordMed;
 import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
@@ -68,6 +72,14 @@ public class StmtMediate {
             poiMed++;
             if( getWordMed(poiMed).type == Token.SEMICN ){
                 poiMed++;
+            }else{
+                ExpSymbol expsym = ExpressionMediate.Exp();
+                String str = "ret i32 " + expsym.value;
+                IntermediateCode.writeLlvmIr( str, true );
+
+                if( getWord(poi).type == Token.SEMICN ) {
+                    poi++;
+                }
             }
         }
         else if( getWordMed(poiMed).type == Token.PRINTFTK ){
@@ -112,7 +124,7 @@ public class StmtMediate {
             symmed.safe = false;
             symmed.value = 0;
             String str = "scanf" + " " + symmed.token;
-            IntermediateCode.writeIntermediateCode( str );
+//            IntermediateCode.writeIntermediateCode( str );
         }
         else{
             if( lvsym.haveValue ){ // 当前的poi是一个常量。
@@ -120,7 +132,7 @@ public class StmtMediate {
                 symmed.safeList[ poi ] = false;
                 symmed.value = 0;
                 String str = "scanf" + " " + lvsym.token + "[" + poi + "]";
-                IntermediateCode.writeIntermediateCode( str );
+//                IntermediateCode.writeIntermediateCode( str );
             }
             else{
                 for( int i = 0; i < 10000; i++ ){
@@ -128,7 +140,7 @@ public class StmtMediate {
                     symmed.value = 0;
                 }
                 String str = "scanf" + " " + lvsym.token + "[" + lvsym.poi + "]";
-                IntermediateCode.writeIntermediateCode( str );
+//                IntermediateCode.writeIntermediateCode( str );
             }
         }
 

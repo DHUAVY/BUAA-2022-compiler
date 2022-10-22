@@ -11,6 +11,8 @@ public class MainFuncDefMediate {
 
     public static void analysis() throws IOException {
         // MainFuncDef → 'int' 'main' '(' ')' Block
+        String str = "define i32 @main() {";
+        IntermediateCode.writeLlvmIr( str, false);
 
         if( getWordMed(poiMed).type == Token.INTTK ){
             poiMed++;
@@ -25,5 +27,8 @@ public class MainFuncDefMediate {
                 }
             }
         }
+
+        str = "}";
+        IntermediateCode.writeLlvmIr( str, false);
     }
 }
