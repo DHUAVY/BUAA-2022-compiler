@@ -13,6 +13,7 @@ public class SymbolMediate {
         public int dim2;
         // 维度信息
 
+        public String reg; // 当前对应的寄存器。
         public boolean safe; // 当前单词的取值是否能够使用。非全局变量且未定义初值，函数形参等情况下即为不可使用。
         public int value; // type = 0，则会有当前对应的value。
         public int[] valueList = new int [10000];

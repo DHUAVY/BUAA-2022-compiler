@@ -42,6 +42,12 @@ public class ExpAnalyse {
 
         ExpSymbol a;
         ExpSymbol b;
+
+//        ExpSymbol[] numStack = new ExpSymbol[100000];
+//        int numTop = 0;
+//        ExpSymbol[] symStack = new ExpSymbol[100000];
+//        int symTop = 0;
+
         ExpSymbol[] stack = new ExpSymbol[100000];
         int top = 0;
 
@@ -49,7 +55,8 @@ public class ExpAnalyse {
             for( int i = 0; i <= poi-1; i++ ){
                 if( expTable[i].type == 1 ){
                     stack[top++] = expTable[i];
-                }else{
+                }
+                else if( expTable[i].type == 0 ){
                     b = stack[--top];
                     a = stack[--top];
                     // 取得当前栈顶的两个操作数。
@@ -62,16 +69,22 @@ public class ExpAnalyse {
 
                         ret = calculate( op, aVal, bVal );
                         stack[top++] = new ExpSymbol( String.valueOf(ret), 1, true);
-
-                        System.out.println( ret );
+                        System.out.println( ret ); // 观测常数的计算结果。
                     }
                     else{
                         token = TemporaryRegister.getFreeReg();
                         str =  token + " = " + a.value + " " + expTable[i].value + " " + b.value;
 
                         stack[top++] = new ExpSymbol(token, 1, false);
-                        IntermediateCode.writeIntermediateCode( str );
+                        IntermediateCode.writeLlvmIr( str, true );
                     }
+                }
+                else if(  expTable[i].type == 3 ){
+                    ExpSymbol tran = stack[--top];
+                    stack[top++] = new ExpSymbol("0", 1, true );
+                    stack[top++] = tran;
+                    expTable[i].type = 0;
+                    i = i - 1;
                 }
             }
             return stack[--top];

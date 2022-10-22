@@ -15,6 +15,7 @@ public class VarDefMediate {
         // a[dim1][dim2]
         String dim1 = "0";
         String dim2 = "0";
+        String reg = ""; // 该变量对应的寄存器。
         ExpSymbol expsym;
 
         String str = "";
@@ -55,14 +56,19 @@ public class VarDefMediate {
             poiMed++;
             InitValMediate.analysis();
             if( dim == 0 ){
-                str = "var int " + ident + " = " + InitValMediate.initValList[0].value + "\n";
+
+                reg = TemporaryRegister.getFreeReg(); // 申请寄存器。
+                str = reg + " = alloca i32"; // 完善符号表。
+                IntermediateCode.writeLlvmIr( str, true );
+
 
                 if( InitValMediate.initValList[0].haveValue ){
                     symmed.safe = true;
                     symmed.value = Integer.parseInt( InitValMediate.initValList[0].value );
                 }
+                str = "store i32 " + InitValMediate.initValList[0].value + ", i32* " + reg;
+                IntermediateCode.writeLlvmIr( str, true);
 
-                IntermediateCode.writeIntermediateCode(str);
             }
             else if( dim == 1 || dim == 2 ){
                 str = "arr int " + ident + "[" + InitValMediate.numExp + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
@@ -84,7 +90,11 @@ public class VarDefMediate {
         }
         else{ // 无初始赋值
             if( dim == 0 ){
-                str = "var int " + ident;
+                reg = TemporaryRegister.getFreeReg(); // 申请寄存器。
+                symmed.reg = reg; // 完善符号表。
+
+                str = reg + " = alloca i32";
+                IntermediateCode.writeLlvmIr( str, true );
                 if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
                     symmed.safe = true;
                     symmed.value = 0;

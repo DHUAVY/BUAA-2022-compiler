@@ -15,6 +15,7 @@ public class ConstDefMediate {
         SymbolMediate symmed;
         String str = "";
         String ident = "";
+        String reg = "";
 
         int dim = 0;
         int dim1 = 0;
@@ -62,9 +63,15 @@ public class ConstDefMediate {
 
                 symmed.value = value;
                 // 完善符号表。
+                if( symmed.dimension != 0 ){ // 当前变量是局部变量。
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
 
-                str = "const int " + ident + " = " + value;
-                IntermediateCode.writeIntermediateCode(str);
+                    str = reg + " = alloca i32";
+                    IntermediateCode.writeLlvmIr( str, true);
+                    str = "store i32 " + value + ", i32* " + reg;
+                    IntermediateCode.writeLlvmIr( str, true);
+                }
             }
             else if( dim == 1 ) {
 

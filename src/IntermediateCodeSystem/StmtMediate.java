@@ -170,8 +170,8 @@ public class StmtMediate {
                 symmed.safe = false;
                 symmed.value = 0;
             }
-            String str = symmed.token + " = " + exp.value;
-            IntermediateCode.writeIntermediateCode( str );
+            String str = "store i32 " + exp.value + ", i32* " + symmed.reg;
+            IntermediateCode.writeLlvmIr( str, true );
         }
         else{
             if( lvsym.haveValue ){ // 当前的poi是一个常量。

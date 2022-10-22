@@ -2,7 +2,7 @@ package IntermediateCodeSystem;
 
 public class ExpSymbol {
 
-    public int type; // 0 -> op, 1-> ident
+    public int type; // 0 -> op, 1-> ident, 3 -> unary op
     public String value; // 当前的值、寄存器或变量等。
     public boolean haveValue; // 当前的取值是否为一个常量。
 

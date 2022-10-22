@@ -80,7 +80,6 @@ public class ExpressionMediate {
         // UnaryExp → UnaryOp UnaryExp
 
         if( getWordMed(poiMed).type == Token.IDENFR && getWordMed(poiMed+1).type == Token.LPARENT ){
-//            plusMinus = true;
 
             IdentMediate.analysis();
             if( getWordMed(poiMed).type == Token.LPARENT ) {
@@ -94,14 +93,12 @@ public class ExpressionMediate {
             }
         }
         else if( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU || getWordMed(poiMed).type == Token.NOT ){
-//            int op = UnaryOpMed();
-//            judgeOp( op ); // 判断当前表达式的正负。
-//            e.plusMinus = plusMinus; // 为当前表达式赋值。
-
+            String str = getWordMed(poiMed).token;
+            UnaryOpMed();
             UnaryExp( e );
+            e.addExpSymbol( str, 3, false);
         }
         else{
-//            plusMinus = true;
             PrimaryExp( e );
         }
     }

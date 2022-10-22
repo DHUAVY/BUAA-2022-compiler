@@ -2,13 +2,10 @@ package IntermediateCodeSystem;
 
 public class TemporaryRegister {
 
-    public static int poi = 0;
-
-    public static boolean[] reg = new boolean[8];
-
+    public static int poi = 1;
 
     public static String getFreeReg(){
-        String str = "$t" + poi;
+        String str = "$" + poi;
         poi ++;
         return str;
     }
