@@ -11,6 +11,7 @@ public class CompUnitMediate {
     public static void analysis() throws IOException {
 
         SymbolTableMediate.init();
+        IOFuncDec();
 
         while( (getWordMed(poiMed).type == Token.CONSTTK ||
                 getWordMed(poiMed + 2 ).type != Token.LPARENT) &&
@@ -24,5 +25,18 @@ public class CompUnitMediate {
         }
 
         MainFuncDefMediate.analysis();
+    }
+
+    public static void IOFuncDec() throws IOException {
+        String func = "declare i32 @getint()";
+        IntermediateCode.writeLlvmIr( func, false );
+        func = "declare void @putint(i32)";
+        IntermediateCode.writeLlvmIr( func, false );
+        func = "declare void @putch(i32)";
+        IntermediateCode.writeLlvmIr( func, false );
+        func = "declare void @putstr(i8*)";
+        IntermediateCode.writeLlvmIr( func, false );
+
+        IntermediateCode.writeLlvmIr( "", false ); // 输出空行
     }
 }

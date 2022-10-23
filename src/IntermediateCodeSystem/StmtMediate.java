@@ -23,6 +23,10 @@ public class StmtMediate {
     // | LVal '=' 'getint''('')'';'
     // | 'printf''('FormatString{','Exp}')'';'
 
+    public static int ioPoi = 0;
+    public static int ioNowPoi = 0;
+    public static ExpSymbol[] ioList = new ExpSymbol[10000];
+
     public static boolean lvalEqualsExpJudge() throws IOException {
         int poiMedInit = poiMed;
 
@@ -123,8 +127,12 @@ public class StmtMediate {
         if( lvsym.dim == 0 ){ // 变量维度为0。
             symmed.safe = false;
             symmed.value = 0;
-            String str = "scanf" + " " + symmed.token;
-//            IntermediateCode.writeIntermediateCode( str );
+
+            String reg = TemporaryRegister.getFreeReg();
+            String str = reg + " = call i32 @getint()";
+            IntermediateCode.writeLlvmIr( str, true);
+            str = "store i32 " + reg + ", i32* " + symmed.reg;
+            IntermediateCode.writeLlvmIr( str, true);
         }
         else{
             if( lvsym.haveValue ){ // 当前的poi是一个常量。
@@ -233,14 +241,18 @@ public class StmtMediate {
 
     public static void handWithPrintf() throws IOException{
         // Stmt → 'printf''('FormatString{','Exp}')'';'
+        String str = "";
         poiMed++;
         if( getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
             if (getWordMed(poiMed).type == Token.STRCON ){
+
+                str = getWordMed(poiMed).token;
+                System.out.println( str );
                 poiMed++;
                 while( getWordMed(poiMed).type == Token.COMMA){
                     poiMed++;
-                    ExpressionMediate.Exp();
+                    ioList[ ioPoi++ ] = ExpressionMediate.Exp();
                 }
                 if (getWordMed(poiMed).type == Token.RPARENT ){
                     poiMed++;
@@ -248,6 +260,16 @@ public class StmtMediate {
                         poiMed++;
                     }
                 }
+            }
+        }
+        for( int i = 0; i < str.length(); i++ ){
+            if( str.charAt(i) == '%' && i + 1 < str.length() && str.charAt(i+1) == 'd'){
+                String ioStr = "call void @putint(i32 " + ioList[ioNowPoi++].value + ")";
+                IntermediateCode.writeLlvmIr( ioStr, true);
+            }
+            else{
+                String ioStr = "call void @putch(i32 " + (byte)str.charAt(i) + ")";
+                IntermediateCode.writeLlvmIr( ioStr, true);
             }
         }
     }

@@ -48,7 +48,7 @@ public class ExpressionMediate {
                     e.addExpSymbol(String.valueOf( symmed.value ), 1, true);
                 }
                 else{
-                    e.addExpSymbol( lvsym.token, 1, false);
+                    e.addExpSymbol( symmed.reg, 1, false);
                 }
             }
             else{
