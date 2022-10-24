@@ -86,17 +86,29 @@ public class IntermediateCode {
         return LexicalAnalysis.wordList[i];
     }
 
-    public static String getPoiOneDim( String reg, String dim, String poi ){ // 获取一维数组的poi个元素。
-        return " = getelementptr [" + dim + " x i32], [" + dim + " x i32]* " + reg + ", i32 0, i32 " + poi;
+    public static String getPoiOneDim( String reg, String poi ){ // 获取一维数组的poi个元素。
+        return " = getelementptr " + "i32, i32* " + reg + ", i32 " + poi;
     }
 
-    public static String getPoiOneDim( String reg, String dim1, String dim2, String poi ){
-        return " = getelementptr [" + dim1 + " x [" + dim2 + " x i32]], [" + dim1 + " x [" + dim2 + " x i32]]* " +
-                reg + ", i32 0, i32 " + poi;
+    public static String getArrOneDim( String reg, String dim2, String poi ){
+        return " = getelementptr [" + dim2 + " x i32], [" + dim2 + " x i32]* " +
+                reg + ", i32 " + poi + ", i32 0";
     }
 
-    public static String getPoiTwoDim( String reg, String dim1, String dim2, String poi1, String poi2 ){
-        return " = getelementptr [" + dim1 + " x [" + dim2 + " x i32]], [" + dim1 + " x [" + dim2 + " x i32]]* " +
-                reg + ", i32 0, i32 " + poi1 + ", i32 " + poi2;
+    public static String getPoiTwoDim( String reg, String dim2, String poi1, String poi2 ){
+        return " = getelementptr [" + dim2 + " x i32], [" + dim2 + " x i32]* " +
+                reg + ", i32 " + poi1 + ", i32 " + poi2;
+    }
+
+    public static void changeOneDimensionPatten( String newreg, String reg, String dim2 ) throws IOException {
+        String dim = "[" + dim2 + " x i32]";
+        String str = newreg + " = getelementptr " + dim + ", " + dim + "* " + reg + ", i32 0, i32 0";
+        writeLlvmIr( str, true );
+    }
+
+    public static void changeTwoDimensionPatten( String newreg, String reg, String dim1, String dim2 ) throws IOException {
+        String dim = "[" + dim1 + " x [" + dim2 + " x i32]]";
+        String str = newreg + " = getelementptr " + dim + ", " + dim + "* " + reg + ", i32 0, i32 0";
+        writeLlvmIr( str, true );
     }
 }

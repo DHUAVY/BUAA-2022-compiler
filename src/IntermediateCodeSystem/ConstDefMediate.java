@@ -91,19 +91,23 @@ public class ConstDefMediate {
             else if( dim == 1 ) {
                 /*----------------------------一维数组,局部变量----------------------------*/
                 if( nowMediateDimension != 0 ){
-                    String arr = "";
                     reg = TemporaryRegister.getFreeReg();
-                    symmed.reg = reg;
-
-                    arr = reg;
-
                     str = reg + " = alloca [" + dim2 + " x i32]";
                     IntermediateCode.writeLlvmIr( str, true);
+
+                    //TODO 修改为 i32* 的格式。
+                    String newReg = TemporaryRegister.getFreeReg(); // newreg
+                    IntermediateCode.changeOneDimensionPatten( newReg, reg, String.valueOf(dim2) );
+
+                    //TODO 更新数组对应的寄存器。
+                    reg = newReg;
+                    symmed.reg = reg;
+                    String arr = reg;
 
                     for( int i = 0;  i < ConstInitValMediate.numExp; i++ ){
 
                         reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
-                        str = reg + IntermediateCode.getPoiOneDim( arr, String.valueOf(symmed.dim2), String.valueOf(i));
+                        str = reg + IntermediateCode.getPoiOneDim( arr, String.valueOf(i));
                         writeLlvmIr( str, true );
 
                         str = "store i32 " + ConstInitValMediate.initValList[i] + ", i32* " + reg;
@@ -136,19 +140,22 @@ public class ConstDefMediate {
                 /*----------------------------二维数组,局部变量----------------------------*/
                 if( nowMediateDimension != 0 ){
 
-                    String arr = "";
                     reg = TemporaryRegister.getFreeReg();
-                    symmed.reg = reg;
-
-                    arr = reg; // 当前数组所在的寄存器。
                     str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
                     IntermediateCode.writeLlvmIr( str, true);
+
+                    String newReg = TemporaryRegister.getFreeReg(); // newreg
+                    IntermediateCode.changeTwoDimensionPatten( newReg, reg, String.valueOf(dim1), String.valueOf(dim2) );
+
+                    reg = newReg;
+                    symmed.reg = reg;
+                    String arr = reg;
+
                     for( int i = 0, j = 0;  i < ConstInitValMediate.numExp; i++ ){
 
                         reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
                         str = reg + IntermediateCode.getPoiTwoDim(
                                 arr,
-                                String.valueOf(symmed.dim1),
                                 String.valueOf(symmed.dim2),
                                 String.valueOf(j),
                                 String.valueOf(i-j*symmed.dim2)

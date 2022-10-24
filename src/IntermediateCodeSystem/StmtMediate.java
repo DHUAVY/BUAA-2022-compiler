@@ -76,7 +76,10 @@ public class StmtMediate {
             poiMed++;
             if( getWordMed(poiMed).type == Token.SEMICN ){
                 poiMed++;
-            }else{
+                String str = "ret void";
+                IntermediateCode.writeLlvmIr( str, true );
+            }
+            else{
                 ExpSymbol expsym = ExpressionMediate.Exp();
                 String str = "ret i32 " + expsym.value;
                 IntermediateCode.writeLlvmIr( str, true );
@@ -148,11 +151,10 @@ public class StmtMediate {
             reg = TemporaryRegister.getFreeReg();
             //TODO 根据原符号的维度进行判断当前为取地址还是取值。
             if( symmed.type == 1 )
-                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi );
-//            else
-//                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi );
+                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi );
             else
-                str = reg + IntermediateCode.getPoiTwoDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi, "0" );
+                str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi);
+
             IntermediateCode.writeLlvmIr( str, true);
             // 获取对应的数组变量地址。
 
@@ -173,7 +175,6 @@ public class StmtMediate {
             reg = TemporaryRegister.getFreeReg();
             str = reg + IntermediateCode.getPoiTwoDim(
                     symmed.reg,
-                    String.valueOf(symmed.dim1),
                     String.valueOf(symmed.dim2),
                     lvsym.poi1,
                     lvsym.poi2
@@ -221,11 +222,9 @@ public class StmtMediate {
 
             //TODO 根据原符号的维度进行判断当前为取地址还是取值。
             if( symmed.type == 1 )
-                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi );
-//            else
-//                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi );
+                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi );
             else
-                str = reg + IntermediateCode.getPoiTwoDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi, "0" );
+                str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi);
 
             IntermediateCode.writeLlvmIr( str, true);
 
@@ -237,7 +236,6 @@ public class StmtMediate {
             String reg = TemporaryRegister.getFreeReg();
             str = reg + IntermediateCode.getPoiTwoDim(
                     symmed.reg,
-                    String.valueOf(symmed.dim1),
                     String.valueOf(symmed.dim2),
                     lvsym.poi1,
                     lvsym.poi2

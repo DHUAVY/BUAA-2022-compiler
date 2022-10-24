@@ -46,8 +46,10 @@ public class ExpAnalyse {
             str += "mul i32 " + a + ", " + b;
         }else if( op.equals("/") ){
             str += "sdiv i32 " + a + ", " + b;
-        }else{
+        }else if( op.equals("%")){
             str += "srem i32 " + a + ", " + b;
+        }else{
+            str = "Wrong! op = " + op + " a = " + a + " b = " + b ;
         }
         IntermediateCode.writeLlvmIr( str, true);
     }

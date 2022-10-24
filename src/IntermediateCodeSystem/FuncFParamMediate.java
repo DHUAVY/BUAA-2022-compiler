@@ -36,11 +36,6 @@ public class FuncFParamMediate {
                 }
             }
         }
-        //TODO 填充原函数的参数信息。
-        if( dim == 2 )
-            func.length[func.paramNum ] = Integer.parseInt(expsym.value);
-        func.paramList[ func.paramNum++ ] = dim;
-
         symmed = symbolTableMediateList[nowMediateDimension].addSymbol( ident );
         symmed.id = id;
         symmed.type = dim;
@@ -61,5 +56,8 @@ public class FuncFParamMediate {
         else if( dim == 2 ){
             IntermediateCode.writeLlvmIrWord("[" + expsym.value + " x i32]* " + reg, false);
         }
+
+        //TODO 填充原函数的参数信息。
+        func.paramList[ func.paramNum++ ] = symmed;
     }
 }

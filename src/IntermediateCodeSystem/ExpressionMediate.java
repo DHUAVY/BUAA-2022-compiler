@@ -43,7 +43,14 @@ public class ExpressionMediate {
 
             /*--------------------------变量维度为0--------------------------*/
             if( lvsym.dim == 0 ){
-                if( symmed.safe ){
+                //TODO 对于普通变量而言，由于存的时候是以 i32* 的形式，因此取值时需要先将其 load 入i32类型。
+                if( symmed.type == 0 ){
+                    String reg = TemporaryRegister.getFreeReg();
+                    str = reg + " = load i32, i32* " + symmed.reg;
+                    IntermediateCode.writeLlvmIr( str, true );
+                    e.addExpSymbol( reg, 1, false);
+                }
+                else if( symmed.safe ){
                     e.addExpSymbol(String.valueOf( symmed.value ), 1, true);
                 }
                 else{
@@ -56,11 +63,9 @@ public class ExpressionMediate {
 
                 //TODO 根据原符号的维度进行判断当前为取地址还是取值。
                 if( symmed.type == 1 )
-                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi );
-//                else
-//                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi );
+                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi );
                 else
-                    str = reg + IntermediateCode.getPoiTwoDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi, "0" );
+                    str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi);
                 IntermediateCode.writeLlvmIr( str, true);
 
                 if( symmed.type == 1 ){
@@ -77,7 +82,6 @@ public class ExpressionMediate {
                 String reg = TemporaryRegister.getFreeReg();
                 str = reg + IntermediateCode.getPoiTwoDim(
                         symmed.reg,
-                        String.valueOf(symmed.dim1),
                         String.valueOf(symmed.dim2),
                         lvsym.poi1,
                         lvsym.poi2
@@ -117,7 +121,7 @@ public class ExpressionMediate {
                 while (getWordMed(poiMed).type != Token.RPARENT) {
                     str += FuncRParamsMediate.analysis( fun );
                 }
-                str += ")\n";
+                str += ")";
                 poiMed++;
             }
 

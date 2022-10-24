@@ -48,17 +48,24 @@ public class FuncDefMediate {
             if( getWordMed(poiMed).type == Token.RPARENT ){
                 poiMed++;
                 IntermediateCode.writeLlvmIr( "){", false );
-
+                TemporaryRegister.poi ++;
                 BlockMediate.analysis( false );
             }
             else{
                 FuncFParamsMediate.analysis( function );
+
                 if( getWordMed(poiMed).type == Token.RPARENT ){
                     poiMed++;
                     IntermediateCode.writeLlvmIr( "){", false );
-                    BlockMediate.analysis( false );
+                    TemporaryRegister.poi ++;
+                    BlockMediate.analysis( false, function );
                 }
             }
+        }
+        //TODO 如果为 void 类型，需补充ret void
+        if( funcType == 0 ){
+            str = "ret void";
+            IntermediateCode.writeLlvmIr( str, true );
         }
         str = "}";
         IntermediateCode.writeLlvmIr( str, false );
