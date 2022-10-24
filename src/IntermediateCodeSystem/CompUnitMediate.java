@@ -19,11 +19,14 @@ public class CompUnitMediate {
             // 0 -> const, 2 !-> (
             DeclMediate.analysis();
         }
+        IntermediateCode.writeLlvmIr("", false); // 插入空行，方便阅读。
 
         while( getWordMed( poiMed + 1).type != Token.MAINTK && getWordMed( poiMed + 1).type != 0 ){
             FuncDefMediate.analysis();
+            TemporaryRegister.poi = 0;
         }
 
+        TemporaryRegister.poi = 1;
         MainFuncDefMediate.analysis();
     }
 

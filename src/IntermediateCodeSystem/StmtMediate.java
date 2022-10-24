@@ -134,22 +134,55 @@ public class StmtMediate {
             str = "store i32 " + reg + ", i32* " + symmed.reg;
             IntermediateCode.writeLlvmIr( str, true);
         }
-        else{
-            if( lvsym.haveValue ){ // 当前的poi是一个常量。
-                int poi = Integer.parseInt(lvsym.poi);
-                symmed.safeList[ poi ] = false;
-                symmed.value = 0;
-                String str = "scanf" + " " + lvsym.token + "[" + poi + "]";
-//                IntermediateCode.writeIntermediateCode( str );
-            }
-            else{
-                for( int i = 0; i < 10000; i++ ){
-                    symmed.safeList[ i ] = false;
-                    symmed.value = 0;
-                }
-                String str = "scanf" + " " + lvsym.token + "[" + lvsym.poi + "]";
-//                IntermediateCode.writeIntermediateCode( str );
-            }
+        else if( lvsym.dim == 1 ){
+
+            symmed.notSafe();
+
+            String reg = TemporaryRegister.getFreeReg();
+            String str = reg + " = call i32 @getint()";
+            IntermediateCode.writeLlvmIr( str, true);
+
+            String input = reg;
+            // 保存输入的值。
+
+            reg = TemporaryRegister.getFreeReg();
+            //TODO 根据原符号的维度进行判断当前为取地址还是取值。
+            if( symmed.type == 1 )
+                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi );
+//            else
+//                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi );
+            else
+                str = reg + IntermediateCode.getPoiTwoDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi, "0" );
+            IntermediateCode.writeLlvmIr( str, true);
+            // 获取对应的数组变量地址。
+
+            str = "store i32 " + input + ", i32* " + reg;
+            IntermediateCode.writeLlvmIr( str, true);
+
+        }
+        else if( lvsym.dim == 2){
+            symmed.notSafe();
+
+            String reg = TemporaryRegister.getFreeReg();
+            String str = reg + " = call i32 @getint()";
+            IntermediateCode.writeLlvmIr( str, true);
+
+            String input = reg;
+            // 保存输入的值。
+
+            reg = TemporaryRegister.getFreeReg();
+            str = reg + IntermediateCode.getPoiTwoDim(
+                    symmed.reg,
+                    String.valueOf(symmed.dim1),
+                    String.valueOf(symmed.dim2),
+                    lvsym.poi1,
+                    lvsym.poi2
+                    );
+            IntermediateCode.writeLlvmIr( str, true);
+            // 获取对应的数组变量地址。
+
+            str = "store i32 " + input + ", i32* " + reg;
+            IntermediateCode.writeLlvmIr( str, true);
         }
 
         poiMed++;
@@ -166,6 +199,7 @@ public class StmtMediate {
 
     public static void lvalEqualExp( lvalSym lvsym ) throws IOException {
         // Stmt → LVal '=' Exp ';'
+        String str = "";
         ExpSymbol exp = ExpressionMediate.Exp();
         SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
 
@@ -178,31 +212,40 @@ public class StmtMediate {
                 symmed.safe = false;
                 symmed.value = 0;
             }
-            String str = "store i32 " + exp.value + ", i32* " + symmed.reg;
+            str = "store i32 " + exp.value + ", i32* " + symmed.reg;
             IntermediateCode.writeLlvmIr( str, true );
         }
-        else{
-            if( lvsym.haveValue ){ // 当前的poi是一个常量。
-                int poi = Integer.parseInt(lvsym.poi);
-                if( exp.haveValue ){
-                    symmed.safeList[ poi ] = true;
-                    symmed.valueList[ poi ] = Integer.parseInt( exp.value );
-                }
-                else{
-                    symmed.safeList[ poi ] = false;
-                    symmed.value = 0;
-                }
-                String str = lvsym.token + "[" + poi + "]" + " = " + exp.value;
-                IntermediateCode.writeIntermediateCode( str );
-            }
-            else{
-                for( int i = 0; i < 10000; i++ ){
-                    symmed.safeList[ i ] = false;
-                    symmed.value = 0;
-                }
-                String str = lvsym.token + "[" + lvsym.poi + "]" + " = " + exp.value;
-                IntermediateCode.writeIntermediateCode( str );
-            }
+        else if( lvsym.dim == 1 ){
+
+            String reg = TemporaryRegister.getFreeReg();
+
+            //TODO 根据原符号的维度进行判断当前为取地址还是取值。
+            if( symmed.type == 1 )
+                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi );
+//            else
+//                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi );
+            else
+                str = reg + IntermediateCode.getPoiTwoDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi, "0" );
+
+            IntermediateCode.writeLlvmIr( str, true);
+
+            str = "store i32 " + exp.value + ", i32* " + reg;
+            IntermediateCode.writeLlvmIr( str, true);
+
+        }
+        else if( lvsym.dim == 2 ){
+            String reg = TemporaryRegister.getFreeReg();
+            str = reg + IntermediateCode.getPoiTwoDim(
+                    symmed.reg,
+                    String.valueOf(symmed.dim1),
+                    String.valueOf(symmed.dim2),
+                    lvsym.poi1,
+                    lvsym.poi2
+            );
+            IntermediateCode.writeLlvmIr( str, true);
+
+            str = "store i32 " + exp.value + ", i32* " + reg;
+            IntermediateCode.writeLlvmIr( str, true);
         }
         if( getWordMed(poiMed).type == Token.SEMICN ){
             poiMed++;
@@ -263,9 +306,18 @@ public class StmtMediate {
             }
         }
         for( int i = 0; i < str.length(); i++ ){
+            if( str.charAt(i) == '\"'){
+                continue;
+            }
             if( str.charAt(i) == '%' && i + 1 < str.length() && str.charAt(i+1) == 'd'){
                 String ioStr = "call void @putint(i32 " + ioList[ioNowPoi++].value + ")";
                 IntermediateCode.writeLlvmIr( ioStr, true);
+                i ++;
+            }
+            else if( str.charAt(i) == '\\' && i + 1 < str.length() && str.charAt(i+1) == 'n'){
+                String ioStr = "call void @putch(i32 " + 10 + ")";
+                IntermediateCode.writeLlvmIr( ioStr, true);
+                i ++;
             }
             else{
                 String ioStr = "call void @putch(i32 " + (byte)str.charAt(i) + ")";

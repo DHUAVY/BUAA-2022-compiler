@@ -38,6 +38,12 @@ public class LValMediate {
             }
         }
 
+        if( dim == 2 ){
+            ExpSymbol tran = expsym2;
+            expsym2 = expsym1;
+            expsym1 = tran;
+        }
+
         String poi = expsym2.value;
         boolean haveValue = expsym2.haveValue;
 
@@ -76,7 +82,7 @@ public class LValMediate {
             }
         }
 
-        return new lvalSym( token, poi, haveValue, dim);
+        return new lvalSym( token, poi, haveValue, dim, expsym1.value, expsym2.value);
 
     }
 }

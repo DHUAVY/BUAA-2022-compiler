@@ -1,6 +1,8 @@
 package IntermediateCodeSystem;
 import java.util.HashMap;
 
+import static IntermediateCodeSystem.IntermediateCode.*;
+
 public class SymbolTableMediate {
 
     public int id; // 当前符号表的id。
@@ -8,9 +10,15 @@ public class SymbolTableMediate {
     public HashMap<String, SymbolMediate> directory = new HashMap<>();
 
     public static void init(){
-        IntermediateCode.symbolTableMediateList[0] = new SymbolTableMediate( 0, -1 ); // 建立全局变量的符号表。
-        IntermediateCode.dimensionMediateNum = 1;
-        IntermediateCode.nowMediateDimension = 0;
+        symbolTableMediateList[0] = new SymbolTableMediate( 0, -1 ); // 建立全局变量的符号表。
+        dimensionMediateNum = 1;
+        nowMediateDimension = 0;
+    }
+
+    public static void addDimension(){
+        symbolTableMediateList[dimensionMediateNum] = new SymbolTableMediate( dimensionMediateNum, nowMediateDimension );
+        nowMediateDimension = dimensionMediateNum;
+        dimensionMediateNum ++;
     }
 
     public SymbolTableMediate( int id, int fatherId ){

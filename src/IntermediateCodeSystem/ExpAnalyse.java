@@ -9,11 +9,10 @@ public class ExpAnalyse {
 
     public ExpSymbol[] expTable = new ExpSymbol[10000];
 
-    public void addExpSymbol( String token, int type, boolean haveValue ){
+    public void addExpSymbol( String token, int type, boolean haveValue){
         ExpSymbol exp = new ExpSymbol(token, type, haveValue);
         expTable[ poi ] = exp;
         poi ++;
-//        System.out.println( exp );
     }
 
     public void addExpSymbol( ExpSymbol expsym ){
@@ -36,17 +35,29 @@ public class ExpAnalyse {
         }
     }
 
+    public void regCalculate( String op, String a, String b, String ans ) throws IOException {
+        String str;
+        str = ans + " = ";
+        if( op.equals("+") ){
+            str += "add i32 " + a + ", " + b;
+        }else if( op.equals("-") ){
+            str += "sub i32 " + a + ", " + b;
+        }else if( op.equals("*") ){
+            str += "mul i32 " + a + ", " + b;
+        }else if( op.equals("/") ){
+            str += "sdiv i32 " + a + ", " + b;
+        }else{
+            str += "srem i32 " + a + ", " + b;
+        }
+        IntermediateCode.writeLlvmIr( str, true);
+    }
+
     public ExpSymbol quaternion() throws IOException {
         String str = "";
         String token = "";
 
         ExpSymbol a;
         ExpSymbol b;
-
-//        ExpSymbol[] numStack = new ExpSymbol[100000];
-//        int numTop = 0;
-//        ExpSymbol[] symStack = new ExpSymbol[100000];
-//        int symTop = 0;
 
         ExpSymbol[] stack = new ExpSymbol[100000];
         int top = 0;
@@ -73,10 +84,9 @@ public class ExpAnalyse {
                     }
                     else{
                         token = TemporaryRegister.getFreeReg();
-                        str =  token + " = " + a.value + " " + expTable[i].value + " " + b.value;
 
                         stack[top++] = new ExpSymbol(token, 1, false);
-                        IntermediateCode.writeLlvmIr( str, true );
+                        regCalculate(expTable[i].value, a.value, b.value, token );
                     }
                 }
                 else if(  expTable[i].type == 3 ){
@@ -88,8 +98,12 @@ public class ExpAnalyse {
                 }
             }
             return stack[--top];
-        }else{
+        }
+        else if( poi == 1){
             return expTable[poi-1];
+        }
+        else{
+            return new ExpSymbol("", 1, false);
         }
     }
 }

@@ -27,4 +27,13 @@ public class SymbolMediate {
                         "\n}";
                 return str;
         }
+
+        public void notSafe(){
+                this.safe = false;
+                this.value = 0;
+                for( int i = 0; i < 10000; i++ ){
+                        this.valueList[i] = 0;
+                        this.safeList[i] = false;
+                }
+        }
 }

@@ -4,17 +4,18 @@ import LexicalSystem.Token;
 
 import java.io.IOException;
 
-import static IntermediateCodeSystem.IntermediateCode.getWordMed;
-import static IntermediateCodeSystem.IntermediateCode.poiMed;
+import static IntermediateCodeSystem.IntermediateCode.*;
 
 public class VarDefMediate {
 
     public static void analysis() throws IOException {
         // VarDef → Ident { '[' ConstExp ']' } | Ident { '[' ConstExp ']' } '=' InitVal
         int dim = 0;
-        // a[dim1][dim2]
+
         String dim1 = "0";
         String dim2 = "0";
+        // a[dim1][dim2]
+
         String reg = ""; // 该变量对应的寄存器。
         ExpSymbol expsym;
 
@@ -31,20 +32,24 @@ public class VarDefMediate {
         // 基础信息。
 
         while( getWordMed(poiMed).type == Token.LBRACK ){
-
             dim ++;
             poiMed++;
             expsym = ExpressionMediate.ConstExp();
-
             if( dim == 1 ){
                 dim2 = expsym.value;
             }else{
-                dim1 = expsym.value;
+                dim1 = expsym.value; // a[dim1][dim2]
             }
-
             if( getWordMed(poiMed).type == Token.RBRACK ){
                 poiMed++;
             }
+        }
+
+        if( dim == 2 ){
+            String tran = "0";
+            tran = dim2;
+            dim2 = dim1;
+            dim1 = tran;
         }
 
         symmed.type = dim;
@@ -55,71 +60,211 @@ public class VarDefMediate {
         if( getWordMed(poiMed).type == Token.ASSIGN ){ // 具有初始赋值
             poiMed++;
             InitValMediate.analysis();
+
             if( dim == 0 ){
+                if( nowMediateDimension != 0 ){
 
-                reg = TemporaryRegister.getFreeReg(); // 申请寄存器。
-                str = reg + " = alloca i32"; // 完善符号表。
-                IntermediateCode.writeLlvmIr( str, true );
+                    reg = TemporaryRegister.getFreeReg(); // 申请寄存器。
+                    symmed.reg = reg; // 完善符号表。
 
+                    str = reg + " = alloca i32";
+                    IntermediateCode.writeLlvmIr( str, true );
 
-                if( InitValMediate.initValList[0].haveValue ){
-                    symmed.safe = true;
-                    symmed.value = Integer.parseInt( InitValMediate.initValList[0].value );
-                }
-                str = "store i32 " + InitValMediate.initValList[0].value + ", i32* " + reg;
-                IntermediateCode.writeLlvmIr( str, true);
-
-            }
-            else if( dim == 1 || dim == 2 ){
-                str = "arr int " + ident + "[" + InitValMediate.numExp + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
-                IntermediateCode.writeIntermediateCode(str);
-
-                for( int i = 0; i < InitValMediate.numExp; i++ ){
-                    str = ident + "[" + i + "]" + " = " + InitValMediate.initValList[i].value;
-
-                    if( InitValMediate.initValList[i].haveValue ){
-                        symmed.safeList[i] = true;
-                        symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[0].value );
+                    if( InitValMediate.initValList[0].haveValue ){
+                        symmed.safe = true;
+                        symmed.value = Integer.parseInt( InitValMediate.initValList[0].value );
                     }
 
-                    IntermediateCode.writeIntermediateCode(str);
+                    str = "store i32 " + InitValMediate.initValList[0].value + ", i32* " + reg;
+                    IntermediateCode.writeLlvmIr( str, true);
+                }
+                else{
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg; // 完善符号表。
+
+                    if( InitValMediate.initValList[0].haveValue ){
+                        symmed.safe = true;
+                        symmed.value = Integer.parseInt( InitValMediate.initValList[0].value );
+                    }
+
+                    str = reg + " = global i32 " + InitValMediate.initValList[0].value;
+                    IntermediateCode.writeLlvmIr( str, false);
                 }
 
+            }
+            /*-----------------------一维数组并且具有初始赋值-----------------------*/
+            else if( dim == 1 ){ //
+                /*----------------------------一维数组,局部变量----------------------------*/
+                if( nowMediateDimension != 0 ){
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
+
+                    String arr = "";
+                    arr = reg;
+
+                    str = reg + " = alloca [" + dim2 + " x i32]";
+                    IntermediateCode.writeLlvmIr( str, true);
+                    for( int i = 0;  i < InitValMediate.numExp; i++ ){
+
+                        reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
+                        str = reg + IntermediateCode.getPoiOneDim( arr, String.valueOf(symmed.dim2), String.valueOf(i) );
+                        writeLlvmIr( str, true );
+
+                        str = "store i32 " + InitValMediate.initValList[i].value + ", i32* " + reg;
+                        writeLlvmIr( str, true);
+
+                        if( InitValMediate.initValList[i].haveValue ){
+                            symmed.safeList[i] = true;
+                            symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[0].value );
+                        }
+                    }
+                }
+                /*----------------------------一维数组,全局变量----------------------------*/
+                else{
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg;
+
+                    str = reg + " = global [" + symmed.dim2 + " x i32] [";
+                    for( int i = 0;  i < InitValMediate.numExp; i++ ){
+                        str += "i32 " + InitValMediate.initValList[i].value;
+                        if( i != InitValMediate.numExp - 1 ){
+                            str += ", ";
+                        }
+                        if( InitValMediate.initValList[i].haveValue ){
+                            symmed.safeList[i] = true;
+                            symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[i].value );
+                        }
+                    }
+                    str += "]";
+                    IntermediateCode.writeLlvmIr( str, false);
+                }
+
+            }
+            else if( dim == 2 ){ // 二维数组，具有初始赋值。
+                /*----------------------------二维数组,局部变量----------------------------*/
+                if( nowMediateDimension != 0 ){
+                    String arr = "";
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
+
+                    arr = reg; // 当前数组所在的寄存器。
+                    str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
+                    IntermediateCode.writeLlvmIr( str, true);
+                    for( int i = 0, j = 0;  i < InitValMediate.numExp; i++ ){
+
+                        reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
+                        str = reg + IntermediateCode.getPoiTwoDim(
+                                arr,
+                                String.valueOf(symmed.dim1),
+                                String.valueOf(symmed.dim2),
+                                String.valueOf(j),
+                                String.valueOf(i-j*symmed.dim2)
+                        );
+                        writeLlvmIr( str, true );
+
+                        str = "store i32 " + InitValMediate.initValList[i].value + ", i32* " + reg;
+                        writeLlvmIr( str, true);
+                        if( InitValMediate.initValList[i].haveValue ){
+                            symmed.safeList[i] = true;
+                            symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[i].value );
+                        }
+                        j = (i + 1) / symmed.dim2;
+                    }
+                }
+                /*----------------------------二维数组,全局变量----------------------------*/
+                else{
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg;
+
+                    str = reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [";
+                    for( int i = 0, j = 0;  i < InitValMediate.numExp; i++ ){
+                        if( InitValMediate.initValList[i].haveValue ){
+                            symmed.safeList[i] = true;
+                            symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[i].value );
+                        }
+                        if( j == 0 ){
+                            str += "[" + symmed.dim2 + " x i32] [";
+                        }
+                        str += "i32 " + InitValMediate.initValList[i].value;
+                        if( j != symmed.dim2 - 1 ){
+                            // 如果j不是当前组的最后一个。
+                            str += ", ";
+                        }
+                        else if( j == symmed.dim2 - 1 && i != InitValMediate.numExp - 1){
+                            // 如果j是当前组的最后一个，且当前组不是最后一组。
+                            str += "], ";
+                        }
+                        j ++;
+                        j = j % symmed.dim2;
+                    }
+                    str += "]]";
+                    IntermediateCode.writeLlvmIr( str, false);
+                }
             }
             InitValMediate.numExp = 0;
         }
-        else{ // 无初始赋值
+        /*----------------------------无初始赋值----------------------------*/
+        else{
             if( dim == 0 ){
-                reg = TemporaryRegister.getFreeReg(); // 申请寄存器。
-                symmed.reg = reg; // 完善符号表。
+                if( nowMediateDimension != 0 ){
+                    reg = TemporaryRegister.getFreeReg(); // 申请寄存器。
+                    symmed.reg = reg; // 完善符号表。
 
-                str = reg + " = alloca i32";
-                IntermediateCode.writeLlvmIr( str, true );
-                if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
+                    str = reg + " = alloca i32";
+                    IntermediateCode.writeLlvmIr( str, true );
+                }
+                else{ // 如果是全局变量，则默认赋值为0。
+                    reg = "@" + symmed.token; // 申请寄存器。
+
+                    symmed.reg = reg;
                     symmed.safe = true;
-                    symmed.value = 0;
+                    symmed.value = 0; // 完善符号表。
+
+                    str = reg + " = global i32 " + 0;
+                    IntermediateCode.writeLlvmIr( str, false);
                 }
             }
+            /*----------------------------一维数组----------------------------*/
             else if( dim == 1 ){
-                str = "arr int " + ident + "[" + dim2 + "]";
-                if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
+                if( nowMediateDimension != 0 ){
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
+                    str = reg + " = alloca [" + dim2 + " x i32]";
+                    IntermediateCode.writeLlvmIr( str, true);
+                }
+                else{ // 一维数组，全局变量。
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg;
+                    str = reg + " = global [" + symmed.dim2 + " x i32] zeroinitializer";
+
+                    IntermediateCode.writeLlvmIr( str, false);
                     for( int i = 0; i < symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;
                     }
                 }
             }
+            /*----------------------------二维数组----------------------------*/
             else if( dim == 2 ){
-                str = "arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]";
-                if( IntermediateCode.nowMediateDimension == 0 ){ // 如果是全局变量，则默认赋值为0。
+                if( nowMediateDimension != 0 ){
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
+
+                    str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
+                    IntermediateCode.writeLlvmIr( str, true);
+                }
+                else{ // 二维数组，全局变量。
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg;
+                    str = reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] zeroinitializer";
+
+                    IntermediateCode.writeLlvmIr( str, false);
                     for( int i = 0; i < symmed.dim2 * symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;
                     }
                 }
             }
-            IntermediateCode.writeIntermediateCode(str);
         }
-        System.out.println( symmed );
     }
 }

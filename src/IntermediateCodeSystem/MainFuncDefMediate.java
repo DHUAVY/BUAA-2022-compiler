@@ -27,7 +27,6 @@ public class MainFuncDefMediate {
                 }
             }
         }
-
         str = "}";
         IntermediateCode.writeLlvmIr( str, false);
     }

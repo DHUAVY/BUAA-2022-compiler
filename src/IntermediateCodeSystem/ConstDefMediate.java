@@ -4,8 +4,7 @@ import LexicalSystem.Token;
 
 import java.io.IOException;
 
-import static IntermediateCodeSystem.IntermediateCode.getWordMed;
-import static IntermediateCodeSystem.IntermediateCode.poiMed;
+import static IntermediateCodeSystem.IntermediateCode.*;
 import static IntermediateCodeSystem.SymbolTableMediate.*;
 
 public class ConstDefMediate {
@@ -48,6 +47,13 @@ public class ConstDefMediate {
             }
         }
 
+        if( dim == 2 ){
+            int tran = 0;
+            tran = dim2;
+            dim2 = dim1;
+            dim1 = tran;
+        }
+
         symmed.type = dim;
         symmed.dim2 = dim2;
         symmed.dim1 = dim1;
@@ -58,12 +64,12 @@ public class ConstDefMediate {
             poiMed++;
             ConstInitValMediate.analyse();
 
-            if( dim == 0 ){
+            if( dim == 0 ){ // 普通变量。
                 int value = Integer.parseInt( ConstInitValMediate.initValList[0] );
-
                 symmed.value = value;
                 // 完善符号表。
-                if( symmed.dimension != 0 ){ // 当前变量是局部变量。
+                /*----------------------------局部变量----------------------------*/
+                if( symmed.dimension != 0 ){
                     reg = TemporaryRegister.getFreeReg();
                     symmed.reg = reg;
 
@@ -72,38 +78,120 @@ public class ConstDefMediate {
                     str = "store i32 " + value + ", i32* " + reg;
                     IntermediateCode.writeLlvmIr( str, true);
                 }
+                /*----------------------------全局变量----------------------------*/
+                else{
+                    reg = reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg; // 完善符号表。
+
+                    str = reg + " = global i32 " + value;
+                    IntermediateCode.writeLlvmIr( str, false);
+                }
             }
+            /*----------------------------一维数组----------------------------*/
             else if( dim == 1 ) {
+                /*----------------------------一维数组,局部变量----------------------------*/
+                if( nowMediateDimension != 0 ){
+                    String arr = "";
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
 
-                str = "const arr int " + ident + "[" + dim2 + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
-                IntermediateCode.writeIntermediateCode(str);
+                    arr = reg;
 
-                for( int i = 0; i < ConstInitValMediate.numExp; i++ ){
+                    str = reg + " = alloca [" + dim2 + " x i32]";
+                    IntermediateCode.writeLlvmIr( str, true);
 
-                    symmed.safeList[i] = true;
-                    symmed.valueList[i] = Integer.parseInt(ConstInitValMediate.initValList[i]);
-                    // 完善符号表。
+                    for( int i = 0;  i < ConstInitValMediate.numExp; i++ ){
 
-                    str = ident + "[" + i + "]" + " = " + ConstInitValMediate.initValList[i];
-                    IntermediateCode.writeIntermediateCode(str);
+                        reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
+                        str = reg + IntermediateCode.getPoiOneDim( arr, String.valueOf(symmed.dim2), String.valueOf(i));
+                        writeLlvmIr( str, true );
+
+                        str = "store i32 " + ConstInitValMediate.initValList[i] + ", i32* " + reg;
+                        writeLlvmIr( str, true);
+
+                        symmed.safeList[i] = true;
+                        symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );
+                    }
+                }
+                /*----------------------------一维数组,全局变量----------------------------*/
+                else{
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg;
+
+                    str = reg + " = constant [" + symmed.dim2 + " x i32] [";
+                    for( int i = 0;  i < ConstInitValMediate.numExp; i++ ){
+                        str += "i32 " + ConstInitValMediate.initValList[i];
+                        if( i != ConstInitValMediate.numExp - 1 ){
+                            str += ", ";
+                        }
+                        symmed.safeList[i] = true;
+                        symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );
+                    }
+                    str += "]";
+                    IntermediateCode.writeLlvmIr( str, false);
                 }
             }
+            /*----------------------------二维数组----------------------------*/
             else if( dim == 2 ){
+                /*----------------------------二维数组,局部变量----------------------------*/
+                if( nowMediateDimension != 0 ){
 
-                str = "const arr int " + ident + "[" + dim1 + "]" + "[" + dim2 + "]"; // 由于赋值的特殊性，我们可以直接用该值表示数组的大小。
-                IntermediateCode.writeIntermediateCode(str);
+                    String arr = "";
+                    reg = TemporaryRegister.getFreeReg();
+                    symmed.reg = reg;
 
-                for( int i = 0; i < ConstInitValMediate.numExp; i++ ){
+                    arr = reg; // 当前数组所在的寄存器。
+                    str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
+                    IntermediateCode.writeLlvmIr( str, true);
+                    for( int i = 0, j = 0;  i < ConstInitValMediate.numExp; i++ ){
 
-                    symmed.safeList[i] = true;
-                    symmed.valueList[i] = Integer.parseInt(ConstInitValMediate.initValList[i]);
-                    // 完善符号表。
+                        reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
+                        str = reg + IntermediateCode.getPoiTwoDim(
+                                arr,
+                                String.valueOf(symmed.dim1),
+                                String.valueOf(symmed.dim2),
+                                String.valueOf(j),
+                                String.valueOf(i-j*symmed.dim2)
+                        );
+                        writeLlvmIr( str, true );
 
-                    str = ident + "[" + i + "]" + " = " + ConstInitValMediate.initValList[i];
-                    IntermediateCode.writeIntermediateCode(str);
+                        str = "store i32 " + ConstInitValMediate.initValList[i] + ", i32* " + reg;
+                        writeLlvmIr( str, true);
+
+                        symmed.safeList[i] = true;
+                        symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );
+                        j = (i + 1) / symmed.dim2;
+                    }
+
+                }
+                /*----------------------------二维数组,全局变量----------------------------*/
+                else{
+                    reg = "@" + symmed.token; // 申请寄存器。
+                    symmed.reg = reg;
+
+                    str = reg + " = constant [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [";
+                    for( int i = 0, j = 0;  i < ConstInitValMediate.numExp; i++ ){
+                        symmed.safeList[i] = true;
+                        symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i]);
+                        if( j == 0 ){
+                            str += "[" + symmed.dim2 + " x i32] [";
+                        }
+                        str += "i32 " + ConstInitValMediate.initValList[i];
+                        if( j != symmed.dim2 - 1 ){
+                            // 如果j不是当前组的最后一个。
+                            str += ", ";
+                        }
+                        else if( j == symmed.dim2 - 1 && i != ConstInitValMediate.numExp - 1){
+                            // 如果j是当前组的最后一个，且当前组不是最后一组。
+                            str += "], ";
+                        }
+                        j ++;
+                        j = j % symmed.dim2;
+                    }
+                    str += "]]";
+                    IntermediateCode.writeLlvmIr( str, false);
                 }
             }
-
             ConstInitValMediate.numExp = 0;
         }
     }

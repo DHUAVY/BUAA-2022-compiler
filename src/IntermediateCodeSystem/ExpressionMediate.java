@@ -10,7 +10,6 @@ public class ExpressionMediate {
 
     public static ExpAnalyse[] expStack = new ExpAnalyse[100000]; // 当前正在处理的表达式栈。
     public static int expStackTop = 0; // 栈内的元素数量。
-    public static boolean plusMinus = true; // true -> +, false -> -
 
     public static ExpSymbol Exp() throws IOException {
 
@@ -22,11 +21,10 @@ public class ExpressionMediate {
 
     public static void PrimaryExp( ExpAnalyse e ) throws IOException {
         // PrimaryExp → '(' Exp ')' | LVal | Number
-        int ret = 0;
+        String str;
         if( getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
             ExpSymbol expSym = Exp();
-//            System.out.println(expSym);
             e.addExpSymbol( expSym );
 
             if( getWordMed(poiMed).type == Token.RPARENT ){
@@ -43,7 +41,8 @@ public class ExpressionMediate {
             lvalSym lvsym = LValMediate.analysis();
             SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
 
-            if( lvsym.dim == 0 ){ // 变量维度为0。
+            /*--------------------------变量维度为0--------------------------*/
+            if( lvsym.dim == 0 ){
                 if( symmed.safe ){
                     e.addExpSymbol(String.valueOf( symmed.value ), 1, true);
                 }
@@ -51,25 +50,46 @@ public class ExpressionMediate {
                     e.addExpSymbol( symmed.reg, 1, false);
                 }
             }
-            else{
-                if( lvsym.haveValue ){ // 当前的poi是一个常量。
-                    int poi = Integer.parseInt(lvsym.poi);
-                    if( symmed.safeList[ poi ] ){
-                        e.addExpSymbol( String.valueOf( symmed.valueList[poi] ), 1, true);
-                    }
-                    else{
-                        String reg = TemporaryRegister.getFreeReg();
-                        String str = reg + " = " + symmed.token + "[" + lvsym.poi + "]";
-                        IntermediateCode.writeIntermediateCode( str );
-                        e.addExpSymbol( reg, 1, false);
-                    }
+            /*--------------------------变量维度为1--------------------------*/
+            else if(  lvsym.dim == 1 ){
+                String reg = TemporaryRegister.getFreeReg();
+
+                //TODO 根据原符号的维度进行判断当前为取地址还是取值。
+                if( symmed.type == 1 )
+                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi );
+//                else
+//                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi );
+                else
+                    str = reg + IntermediateCode.getPoiTwoDim( symmed.reg, String.valueOf(symmed.dim1), String.valueOf(symmed.dim2), lvsym.poi, "0" );
+                IntermediateCode.writeLlvmIr( str, true);
+
+                if( symmed.type == 1 ){
+                    String address = reg;
+                    reg = TemporaryRegister.getFreeReg();
+                    str = reg + " = load i32, i32* " + address;
+                    IntermediateCode.writeLlvmIr( str, true);
                 }
-                else{
-                    String reg = TemporaryRegister.getFreeReg();
-                    String str = reg + " = " + symmed.token + "[" + lvsym.poi + "]";
-                    IntermediateCode.writeIntermediateCode( str );
-                    e.addExpSymbol( reg, 1, false);
-                }
+
+                e.addExpSymbol( reg, 1, false);
+            }
+            /*--------------------------变量维度为2--------------------------*/
+            else if(  lvsym.dim == 2 ){
+                String reg = TemporaryRegister.getFreeReg();
+                str = reg + IntermediateCode.getPoiTwoDim(
+                        symmed.reg,
+                        String.valueOf(symmed.dim1),
+                        String.valueOf(symmed.dim2),
+                        lvsym.poi1,
+                        lvsym.poi2
+                );
+                IntermediateCode.writeLlvmIr( str, true);
+
+                String address = reg;
+                reg = TemporaryRegister.getFreeReg();
+                str = reg + " = load i32, i32* " + address;
+                IntermediateCode.writeLlvmIr( str, true);
+
+                e.addExpSymbol( reg, 1, false);
             }
         }
     }
@@ -79,40 +99,50 @@ public class ExpressionMediate {
         // UnaryExp → Ident '(' [FuncRParams] ')'
         // UnaryExp → UnaryOp UnaryExp
 
+        //TODO add func
         if( getWordMed(poiMed).type == Token.IDENFR && getWordMed(poiMed+1).type == Token.LPARENT ){
 
-            IdentMediate.analysis();
+            String str = "";
+            String reg = "";
+            String func;
+            func = IdentMediate.analysis();
+
+            //TODO 获取当前函数的信息。
+            FunctionMediate fun;
+            fun = FunctionMediateTable.findSymbol( func );
+
             if( getWordMed(poiMed).type == Token.LPARENT ) {
-
+                str += "(";
                 poiMed++;
-
                 while (getWordMed(poiMed).type != Token.RPARENT) {
-                    FuncRParamsMediate.analysis(); // 如果有参数，在下一阶段中查明参数的个数后检查。
+                    str += FuncRParamsMediate.analysis( fun );
                 }
+                str += ")\n";
                 poiMed++;
             }
+
+            //TODO 结合当前函数不同类型进行处理。
+            if( fun.retType == 0 ){
+                str = "call void @" + func + str;
+                IntermediateCode.writeLlvmIr( str, true);
+            }
+            else{
+                reg = TemporaryRegister.getFreeReg();
+                str = reg + " = call i32 @" + func + str;
+                IntermediateCode.writeLlvmIr( str, true);
+                e.addExpSymbol( reg, 1, false);
+            }
         }
+
         else if( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU || getWordMed(poiMed).type == Token.NOT ){
             String str = getWordMed(poiMed).token;
             UnaryOpMed();
             UnaryExp( e );
             e.addExpSymbol( str, 3, false);
         }
+
         else{
             PrimaryExp( e );
-        }
-    }
-
-    public static void judgeOp( int op ){
-        if( plusMinus ){ // +
-            if( op == Token.MINU ){ // -
-                plusMinus = false; // -
-            }
-        }
-        else{ // -
-            if( op == Token.MINU ){ // -
-                plusMinus = true; // +
-            }
         }
     }
 

@@ -39,6 +39,14 @@ public class IntermediateCode {
         }
     }
 
+    public static void writeLlvmIrWord( String str, boolean block ) throws IOException { // block对于当前语句是否需要空格进行判断。
+        if( block )
+            str = "\t" + str;
+
+        if( FileControl.LlvmIrFilePrint ){
+            Files.write(Paths.get(fileName), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+        }
+    }
 
     public static void BTypeMed() throws IOException {
         if( getWordMed(poiMed).type == Token.INTTK ){
@@ -76,5 +84,19 @@ public class IntermediateCode {
             return new Lexical("", 0, 0, -1);
         }
         return LexicalAnalysis.wordList[i];
+    }
+
+    public static String getPoiOneDim( String reg, String dim, String poi ){ // 获取一维数组的poi个元素。
+        return " = getelementptr [" + dim + " x i32], [" + dim + " x i32]* " + reg + ", i32 0, i32 " + poi;
+    }
+
+    public static String getPoiOneDim( String reg, String dim1, String dim2, String poi ){
+        return " = getelementptr [" + dim1 + " x [" + dim2 + " x i32]], [" + dim1 + " x [" + dim2 + " x i32]]* " +
+                reg + ", i32 0, i32 " + poi;
+    }
+
+    public static String getPoiTwoDim( String reg, String dim1, String dim2, String poi1, String poi2 ){
+        return " = getelementptr [" + dim1 + " x [" + dim2 + " x i32]], [" + dim1 + " x [" + dim2 + " x i32]]* " +
+                reg + ", i32 0, i32 " + poi1 + ", i32 " + poi2;
     }
 }

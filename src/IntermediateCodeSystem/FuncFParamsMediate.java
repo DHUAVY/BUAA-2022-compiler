@@ -9,13 +9,14 @@ import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
 public class FuncFParamsMediate {
 
-    public static void analysis() throws IOException {
+    public static void analysis( FunctionMediate fun ) throws IOException {
         // FuncFParams → FuncFParam { ',' FuncFParam }
 
-        FuncFParamMediate.analysis();
+        FuncFParamMediate.analysis(  fun  );
         while( getWordMed(poiMed).type == Token.COMMA ){
+            IntermediateCode.writeLlvmIrWord(", ", false);
             poiMed++;
-            FuncFParamMediate.analysis();
+            FuncFParamMediate.analysis( fun );
         }
     }
 }

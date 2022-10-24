@@ -6,7 +6,7 @@ public class ExpSymbol {
     public String value; // 当前的值、寄存器或变量等。
     public boolean haveValue; // 当前的取值是否为一个常量。
 
-    public ExpSymbol( String value, int type, boolean haveValue ){
+    public ExpSymbol( String value, int type, boolean haveValue){
         this.type = type;
         this.value = value;
         this.haveValue = haveValue;
