@@ -23,11 +23,13 @@ public class CompUnitMediate {
 
         while( getWordMed( poiMed + 1).type != Token.MAINTK && getWordMed( poiMed + 1).type != 0 ){
             FuncDefMediate.analysis();
+            SymbolTableMediate.globalVarInit();
             TemporaryRegister.poi = 0;
         }
 
         TemporaryRegister.poi = 1;
         MainFuncDefMediate.analysis();
+        SymbolTableMediate.globalVarInit();
     }
 
     public static void IOFuncDec() throws IOException {

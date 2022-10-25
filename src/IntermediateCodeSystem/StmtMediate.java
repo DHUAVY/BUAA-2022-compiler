@@ -151,9 +151,9 @@ public class StmtMediate {
             reg = TemporaryRegister.getFreeReg();
             //TODO 根据原符号的维度进行判断当前为取地址还是取值。
             if( symmed.type == 1 )
-                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi );
+                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi2 );
             else
-                str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi);
+                str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi2);
 
             IntermediateCode.writeLlvmIr( str, true);
             // 获取对应的数组变量地址。
@@ -222,9 +222,9 @@ public class StmtMediate {
 
             //TODO 根据原符号的维度进行判断当前为取地址还是取值。
             if( symmed.type == 1 )
-                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi );
+                str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi2 );
             else
-                str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi);
+                str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi2 );
 
             IntermediateCode.writeLlvmIr( str, true);
 

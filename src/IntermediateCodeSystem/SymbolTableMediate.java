@@ -1,5 +1,8 @@
 package IntermediateCodeSystem;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import static IntermediateCodeSystem.IntermediateCode.*;
 
@@ -20,6 +23,19 @@ public class SymbolTableMediate {
         nowMediateDimension = dimensionMediateNum;
         dimensionMediateNum ++;
     }
+
+
+    //TODO 对于全局变量在每个函数中进行初始化。
+    public static void globalVarInit(){
+        Iterator< Map.Entry<String, SymbolMediate>> iterator = symbolTableMediateList[0].directory.entrySet().iterator();
+        while( iterator.hasNext() ){
+            Map.Entry<String, SymbolMediate> entry = iterator.next();
+            SymbolMediate symmed = entry.getValue();
+            symmed.initial = false;
+            symmed.reg = "@" + symmed.token;
+        }
+    }
+
 
     public SymbolTableMediate( int id, int fatherId ){
         this.id = id;

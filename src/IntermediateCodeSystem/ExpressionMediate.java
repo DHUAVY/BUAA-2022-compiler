@@ -21,15 +21,14 @@ public class ExpressionMediate {
 
     public static void PrimaryExp( ExpAnalyse e ) throws IOException {
         // PrimaryExp → '(' Exp ')' | LVal | Number
-        String str;
+        String str ="";
         if( getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
             ExpSymbol expSym = Exp();
             e.addExpSymbol( expSym );
 
-            if( getWordMed(poiMed).type == Token.RPARENT ){
+            if( getWordMed(poiMed).type == Token.RPARENT )
                 poiMed++;
-            }
         }
 
         else if( getWordMed(poiMed).type == Token.INTCON ){
@@ -41,6 +40,27 @@ public class ExpressionMediate {
             lvalSym lvsym = LValMediate.analysis();
             SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
 
+            if( !symmed.initial && symmed.dimension == 0 && symmed.type != 0 ){
+                String newReg = TemporaryRegister.getFreeReg();
+                symmed.initial = true;
+                if( symmed.type == 1 ){
+                    IntermediateCode.changeOneDimensionPatten(
+                            newReg,
+                            symmed.reg,
+                            String.valueOf(symmed.dim2)
+                    );
+                }
+                else if( symmed.type == 2 ){
+                    IntermediateCode.changeTwoDimensionPatten(
+                            newReg,
+                            symmed.reg,
+                            String.valueOf(symmed.dim1),
+                            String.valueOf(symmed.dim2)
+                    );
+                }
+                symmed.reg = newReg;
+            }
+
             /*--------------------------变量维度为0--------------------------*/
             if( lvsym.dim == 0 ){
                 //TODO 对于普通变量而言，由于存的时候是以 i32* 的形式，因此取值时需要先将其 load 入i32类型。
@@ -50,10 +70,8 @@ public class ExpressionMediate {
                     IntermediateCode.writeLlvmIr( str, true );
                     e.addExpSymbol( reg, 1, false);
                 }
-                else if( symmed.safe ){
-                    e.addExpSymbol(String.valueOf( symmed.value ), 1, true);
-                }
                 else{
+                    //TODO 由于已经初始化完成，这里直接将代表的数组送入即可。
                     e.addExpSymbol( symmed.reg, 1, false);
                 }
             }
@@ -63,11 +81,13 @@ public class ExpressionMediate {
 
                 //TODO 根据原符号的维度进行判断当前为取地址还是取值。
                 if( symmed.type == 1 )
-                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi );
-                else
-                    str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi);
+                    str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi2 );
+                else if( symmed.type == 2 )
+                    str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi2 );
+
                 IntermediateCode.writeLlvmIr( str, true);
 
+                //TODO 对一维数组进行取值。
                 if( symmed.type == 1 ){
                     String address = reg;
                     reg = TemporaryRegister.getFreeReg();
@@ -79,6 +99,7 @@ public class ExpressionMediate {
             }
             /*--------------------------变量维度为2--------------------------*/
             else if(  lvsym.dim == 2 ){
+                //TODO 此时只可能为对当前的二维数组取值。
                 String reg = TemporaryRegister.getFreeReg();
                 str = reg + IntermediateCode.getPoiTwoDim(
                         symmed.reg,

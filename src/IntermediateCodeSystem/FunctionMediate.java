@@ -12,12 +12,14 @@ public class FunctionMediate {
         for( int i = 0; i < paramNum; i++ ){
             SymbolMediate symmed = paramList[i];
             String reg = TemporaryRegister.getFreeReg();
-            String str = reg + " = alloca i32";
-            IntermediateCode.writeLlvmIr( str, true );
+            if( symmed.type == 0 ){
+                String str = reg + " = alloca i32";
+                IntermediateCode.writeLlvmIr( str, true );
 
-            str = "store i32 " + symmed.reg + ", i32* " + reg;
-            IntermediateCode.writeLlvmIr( str, true );
-            symmed.reg = reg;
+                str = "store i32 " + symmed.reg + ", i32* " + reg;
+                IntermediateCode.writeLlvmIr( str, true );
+                symmed.reg = reg;
+            }
         }
     }
 }
