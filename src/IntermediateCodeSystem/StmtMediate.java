@@ -204,6 +204,8 @@ public class StmtMediate {
         ExpSymbol exp = ExpressionMediate.Exp();
         SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
 
+        symmed.globalVarChange();
+
         if( lvsym.dim == 0 ){ // 变量维度为0。
             if( exp.haveValue ){
                 symmed.safe = true;

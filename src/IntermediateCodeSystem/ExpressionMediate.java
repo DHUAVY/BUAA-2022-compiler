@@ -40,26 +40,27 @@ public class ExpressionMediate {
             lvalSym lvsym = LValMediate.analysis();
             SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
 
-            if( !symmed.initial && symmed.dimension == 0 && symmed.type != 0 ){
-                String newReg = TemporaryRegister.getFreeReg();
-                symmed.initial = true;
-                if( symmed.type == 1 ){
-                    IntermediateCode.changeOneDimensionPatten(
-                            newReg,
-                            symmed.reg,
-                            String.valueOf(symmed.dim2)
-                    );
-                }
-                else if( symmed.type == 2 ){
-                    IntermediateCode.changeTwoDimensionPatten(
-                            newReg,
-                            symmed.reg,
-                            String.valueOf(symmed.dim1),
-                            String.valueOf(symmed.dim2)
-                    );
-                }
-                symmed.reg = newReg;
-            }
+            symmed.globalVarChange();
+//            if( !symmed.initial && symmed.dimension == 0 && symmed.type != 0 ){
+//                String newReg = TemporaryRegister.getFreeReg();
+//                symmed.initial = true;
+//                if( symmed.type == 1 ){
+//                    IntermediateCode.changeOneDimensionPatten(
+//                            newReg,
+//                            symmed.reg,
+//                            String.valueOf(symmed.dim2)
+//                    );
+//                }
+//                else if( symmed.type == 2 ){
+//                    IntermediateCode.changeTwoDimensionPatten(
+//                            newReg,
+//                            symmed.reg,
+//                            String.valueOf(symmed.dim1),
+//                            String.valueOf(symmed.dim2)
+//                    );
+//                }
+//                symmed.reg = newReg;
+//            }
 
             /*--------------------------变量维度为0--------------------------*/
             if( lvsym.dim == 0 ){

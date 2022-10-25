@@ -1,5 +1,7 @@
 package IntermediateCodeSystem;
 
+import java.io.IOException;
+
 public class SymbolMediate {
 
         public int id; // 当前单词对应的id，即poi。
@@ -35,6 +37,29 @@ public class SymbolMediate {
                 for( int i = 0; i < 10000; i++ ){
                         this.valueList[i] = 0;
                         this.safeList[i] = false;
+                }
+        }
+
+        public void globalVarChange() throws IOException {
+                if( !initial && dimension == 0 && type != 0 ){
+                        String newReg = TemporaryRegister.getFreeReg();
+                        initial = true;
+                        if( type == 1 ){
+                                IntermediateCode.changeOneDimensionPatten(
+                                        newReg,
+                                        reg,
+                                        String.valueOf(dim2)
+                                );
+                        }
+                        else if( type == 2 ){
+                                IntermediateCode.changeTwoDimensionPatten(
+                                        newReg,
+                                        reg,
+                                        String.valueOf(dim1),
+                                        String.valueOf(dim2)
+                                );
+                        }
+                        reg = newReg;
                 }
         }
 }
