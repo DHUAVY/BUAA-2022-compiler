@@ -205,19 +205,39 @@ public class ExpressionMediate {
     }
 
     public static void RelExp( ExpAnalyse e ) throws IOException {
-        AddExp();
-        while( getWordMed(poiMed).type == Token.LSS || getWordMed(poiMed).type == Token.GRE ||
-                getWordMed(poiMed).type == Token.GEQ || getWordMed(poiMed).type == Token.LEQ){
+
+        //TODO 防止出现 if( a + b )这种情况。
+        boolean single = true;
+        ExpSymbol expsym = AddExp();
+        e.addExpSymbol( expsym.value, 1, expsym.haveValue );
+
+        while( getWordMed(poiMed).type == Token.LSS ||
+                getWordMed(poiMed).type == Token.GRE ||
+                getWordMed(poiMed).type == Token.GEQ ||
+                getWordMed(poiMed).type == Token.LEQ
+        ){
+            single = false;
+            String str = getWordMed(poiMed).token;
             poiMed++;
-            AddExp();
+            expsym = AddExp();
+            e.addExpSymbol( expsym.value, 1, expsym.haveValue );
+            e.addExpSymbol( str, 0, false );
+        }
+
+        if( !single ){
+            //TODO 添加额外条件，if( a + b ) <==> if( a + b != 0 )
+            e.addExpSymbol( "0", 1, true );
+            e.addExpSymbol( "!=", 0, false );
         }
     }
 
     public static void EqExp( ExpAnalyse e ) throws IOException {
         RelExp(e);
         while(getWordMed(poiMed).type == Token.EQL || getWordMed(poiMed).type == Token.NEQ ){
+            String str = getWordMed(poiMed).token;
             poiMed++;
             RelExp(e);
+            e.addExpSymbol( str, 0, false );
         }
     }
 
@@ -225,18 +245,24 @@ public class ExpressionMediate {
         // LAndExp → EqExp | LAndExp '&&' EqExp
         EqExp(e);
         while(getWordMed(poiMed).type == Token.AND){
+            String str = getWordMed(poiMed).token;
             poiMed++;
             EqExp(e);
+            e.addExpSymbol( str, 0, false );
         }
     }
 
-    public static void LOrExp(ExpAnalyse e) throws IOException {
+    public static ExpSymbol LOrExp(ExpAnalyse e) throws IOException {
         // LOrExp → LAndExp | LOrExp '||' LAndExp
         LAndExp(e);
         while(getWordMed(poiMed).type == Token.OR){
+            String str = getWordMed(poiMed).token;
             poiMed++;
             LAndExp(e);
+            e.addExpSymbol( str, 0, false );
         }
+        ExpSymbol expsym = e.quaternion();
+        return expsym;
     }
 
     public static ExpSymbol ConstExp() throws IOException{

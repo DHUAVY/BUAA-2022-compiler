@@ -21,7 +21,7 @@ public class ExpAnalyse {
 //        System.out.println( expsym );
     }
 
-    public int calculate( String op, int a, int b ){
+    public int calculate( String op, int a, int b ) throws IOException {
         if( op.equals("+") ){
             return a + b;
         }else if( op.equals("-") ){
@@ -30,9 +30,53 @@ public class ExpAnalyse {
             return a * b;
         }else if( op.equals("/") ){
             return a / b;
-        }else{
+        }else if( op.equals("%") ){
             return a % b;
+        }else if( op.equals("&&") ){
+            return a & b;
         }
+        else if( op.equals("||") ){
+            return a | b;
+        }
+        else if( op.equals(">") ){
+            if( a > b )
+                return 1;
+            else
+                return 0;
+        }
+        else if( op.equals("<") ){
+            if( a < b )
+                return 1;
+            else
+                return 0;
+        }
+        else if( op.equals(">=") ){
+            if( a >= b )
+                return 1;
+            else
+                return 0;
+        }
+        else if( op.equals("<=") ){
+            if( a <= b )
+                return 1;
+            else
+                return 0;
+        }
+        else if( op.equals("==") ){
+            if( a == b )
+                return 1;
+            else
+                return 0;
+        }
+        else if( op.equals("!=") ){
+            if( a != b )
+                return 1;
+            else
+                return 0;
+        }
+        String str = "Wrong! op = " + op + " a = " + a + " b = " + b ;
+        IntermediateCode.writeLlvmIr( str, true);
+        return -1;
     }
 
     public void regCalculate( String op, String a, String b, String ans ) throws IOException {
@@ -48,7 +92,24 @@ public class ExpAnalyse {
             str += "sdiv i32 " + a + ", " + b;
         }else if( op.equals("%")){
             str += "srem i32 " + a + ", " + b;
-        }else{
+        }else if(  op.equals("&&") ){
+            str += "and i1 " + a + ", " + b;
+        }else if( op.equals("||") ){
+            str += "or i1 " + a + ", " + b;
+        }else if( op.equals(">") ){
+            str += "icmp sgt i32 " + a + ", " + b;
+        }else if( op.equals("<") ){
+            str += "icmp slt i32 " + a + ", " + b;
+        }else if( op.equals(">=") ){
+            str += "icmp sge i32 " + a + ", " + b;
+        }else if( op.equals("<=") ){
+            str += "icmp sle i32 " + a + ", " + b;
+        }else if( op.equals("==") ){
+            str += "icmp eq i32 " + a + ", " + b;
+        }else if( op.equals("!=") ){
+            str += "icmp ne i32 " + a + ", " + b;
+        }
+        else{
             str = "Wrong! op = " + op + " a = " + a + " b = " + b ;
         }
         IntermediateCode.writeLlvmIr( str, true);
