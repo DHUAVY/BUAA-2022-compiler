@@ -13,12 +13,15 @@ public class CompUnitMediate {
         SymbolTableMediate.init();
         IOFuncDec();
 
+        //TODO 定义变量时不对文件进行写入。
+        IntermediateCode.writeInFile = false;
         while( (getWordMed(poiMed).type == Token.CONSTTK ||
                 getWordMed(poiMed + 2 ).type != Token.LPARENT) &&
                 (getWordMed(poiMed + 2 ).type != 0 ) ){
             // 0 -> const, 2 !-> (
             DeclMediate.analysis();
         }
+        IntermediateCode.writeInFile = true;
         IntermediateCode.writeLlvmIr("", false); // 插入空行，方便阅读。
 
         while( getWordMed( poiMed + 1).type != Token.MAINTK && getWordMed( poiMed + 1).type != 0 ){

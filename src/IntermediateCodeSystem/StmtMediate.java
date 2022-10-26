@@ -204,6 +204,7 @@ public class StmtMediate {
         ExpSymbol exp = ExpressionMediate.Exp();
         SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
 
+        // TODO 将全局变量的形式匹配如当前的函数。
         symmed.globalVarChange();
 
         if( lvsym.dim == 0 ){ // 变量维度为0。

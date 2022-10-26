@@ -20,6 +20,8 @@ public class IntermediateCode {
     public static int nowMediateDimension = 0;
     public static SymbolTableMediate[] symbolTableMediateList = new SymbolTableMediate[100000];
 
+    public static boolean writeInFile = true;
+
     public static void writeIntermediateCode( String str ) throws IOException { // 向文件中进行写入。
         str = str + "\n";
 
@@ -28,21 +30,38 @@ public class IntermediateCode {
         }
     }
 
-    public static void writeLlvmIr( String str, boolean block ) throws IOException { // block对于当前语句是否需要空格进行判断。
-        str = str + "\n";
+    public static boolean isNumeric(String str){
+        for (int i = str.length(); --i >= 0;){
+            if (!Character.isDigit(str.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public static void writeGlobalVarDef( String str ) throws IOException {
+        str = str + "\n";
+        if( FileControl.LlvmIrFilePrint ){
+            Files.write(Paths.get(fileName), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+        }
+    }
+
+    public static void writeLlvmIr( String str, boolean block ) throws IOException { // block对于当前语句是否需要空格进行判断。
+        if( !writeInFile )
+            return;
+        str = str + "\n";
         if( block )
             str = "\t" + str;
-
         if( FileControl.LlvmIrFilePrint ){
             Files.write(Paths.get(fileName), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
         }
     }
 
     public static void writeLlvmIrWord( String str, boolean block ) throws IOException { // block对于当前语句是否需要空格进行判断。
+        if( !writeInFile )
+            return;
         if( block )
             str = "\t" + str;
-
         if( FileControl.LlvmIrFilePrint ){
             Files.write(Paths.get(fileName), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
         }

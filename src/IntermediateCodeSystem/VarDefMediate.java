@@ -88,7 +88,7 @@ public class VarDefMediate {
                     }
 
                     str = reg + " = global i32 " + InitValMediate.initValList[0].value;
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
 
             }
@@ -141,7 +141,7 @@ public class VarDefMediate {
                         }
                     }
                     str += "]";
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
 
             }
@@ -159,8 +159,9 @@ public class VarDefMediate {
                     //TODO 更新数组对应的寄存器。
                     reg = newReg;
                     symmed.reg = reg;
-                    String arr = reg;
 
+                    //TODO 为数组赋值。
+                    String arr = reg;
                     for( int i = 0, j = 0;  i < InitValMediate.numExp; i++ ){
 
                         reg = TemporaryRegister.getFreeReg(); // 为数组的每一位置获取新的reg。
@@ -208,7 +209,7 @@ public class VarDefMediate {
                         j = j % symmed.dim2;
                     }
                     str += "]]";
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
             }
             InitValMediate.numExp = 0;
@@ -231,7 +232,7 @@ public class VarDefMediate {
                     symmed.value = 0; // 完善符号表。
 
                     str = reg + " = global i32 " + 0;
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
             }
             /*----------------------------一维数组----------------------------*/
@@ -241,13 +242,21 @@ public class VarDefMediate {
                     symmed.reg = reg;
                     str = reg + " = alloca [" + dim2 + " x i32]";
                     IntermediateCode.writeLlvmIr( str, true);
+
+                    //TODO 修改为 i32* 的格式。
+                    String newReg = TemporaryRegister.getFreeReg(); // newreg
+                    IntermediateCode.changeOneDimensionPatten( newReg, reg, dim2 );
+
+                    //TODO 更新数组对应的寄存器。
+                    reg = newReg;
+                    symmed.reg = reg;
                 }
                 else{ // 一维数组，全局变量。
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
                     str = reg + " = global [" + symmed.dim2 + " x i32] zeroinitializer";
 
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                     for( int i = 0; i < symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;
@@ -259,16 +268,23 @@ public class VarDefMediate {
                 if( nowMediateDimension != 0 ){
                     reg = TemporaryRegister.getFreeReg();
                     symmed.reg = reg;
-
                     str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
                     IntermediateCode.writeLlvmIr( str, true);
+
+                    //TODO 修改为 a x i32* 的格式。
+                    String newReg = TemporaryRegister.getFreeReg(); // newreg
+                    IntermediateCode.changeTwoDimensionPatten( newReg, reg, dim1, dim2 );
+
+                    //TODO 更新数组对应的寄存器。
+                    reg = newReg;
+                    symmed.reg = reg;
                 }
                 else{ // 二维数组，全局变量。
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
                     str = reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] zeroinitializer";
 
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                     for( int i = 0; i < symmed.dim2 * symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;

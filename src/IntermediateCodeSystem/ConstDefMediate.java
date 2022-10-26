@@ -84,7 +84,7 @@ public class ConstDefMediate {
                     symmed.reg = reg; // 完善符号表。
 
                     str = reg + " = global i32 " + value;
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
             }
             /*----------------------------一维数组----------------------------*/
@@ -132,7 +132,7 @@ public class ConstDefMediate {
                         symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );
                     }
                     str += "]";
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
             }
             /*----------------------------二维数组----------------------------*/
@@ -163,7 +163,7 @@ public class ConstDefMediate {
                         writeLlvmIr( str, true );
 
                         str = "store i32 " + ConstInitValMediate.initValList[i] + ", i32* " + reg;
-                        writeLlvmIr( str, true);
+                        IntermediateCode.writeGlobalVarDef( str );
 
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );
@@ -196,7 +196,7 @@ public class ConstDefMediate {
                         j = j % symmed.dim2;
                     }
                     str += "]]";
-                    IntermediateCode.writeLlvmIr( str, false);
+                    IntermediateCode.writeGlobalVarDef( str );
                 }
             }
             ConstInitValMediate.numExp = 0;
