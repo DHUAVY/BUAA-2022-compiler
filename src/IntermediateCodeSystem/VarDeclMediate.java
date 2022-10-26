@@ -22,6 +22,5 @@ public class VarDeclMediate {
         if( getWordMed(poiMed).type == Token.SEMICN ){
             poiMed++;
         }
-
     }
 }

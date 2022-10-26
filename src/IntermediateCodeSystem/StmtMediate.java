@@ -254,19 +254,26 @@ public class StmtMediate {
 
     public static void handWithIf() throws IOException {
         // Stmt → 'if' '(' Cond ')' Stmt [ 'else' Stmt ]
+        String nextReg;
         poiMed++;
         if(getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
-            CondMediate.analysis(); // Cond
+            nextReg = CondMediate.analysis(); // Cond
             if(getWordMed(poiMed).type == Token.RPARENT ){
                 poiMed++;
+                LabelMediate.labelPrint();
                 analysis(); // Stmt
+                IntermediateCode.writeLlvmIr("br label "+nextReg, true);
+
+                LabelMediate.labelPrint();
                 if(getWordMed(poiMed).type == Token.ELSETK ){
                     poiMed++;
                     analysis(); // Stmt
                 }
+                IntermediateCode.writeLlvmIr("br label "+nextReg, true);
             }
         }
+        LabelMediate.labelPrint();
     }
 
     public static void handWithWhile() throws IOException {

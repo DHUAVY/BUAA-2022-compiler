@@ -1,5 +1,7 @@
 package IntermediateCodeSystem;
 
+import java.io.IOException;
+
 public class LabelMediate {
 
     public String reg; // %l1
@@ -16,6 +18,12 @@ public class LabelMediate {
         labmed.label = "l" + poi++;
         labmed.reg = "%" + labmed.label;
         return labmed;
+    }
+
+    public static void labelPrint() throws IOException {
+        LabelMediate labmed = labelStack[--labelTop];
+        IntermediateCode.writeLlvmIr("", false);
+        IntermediateCode.writeLlvmIr( labmed.label + ":", false );
     }
 
 }

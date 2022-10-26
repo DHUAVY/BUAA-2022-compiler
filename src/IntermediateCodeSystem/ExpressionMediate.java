@@ -125,7 +125,7 @@ public class ExpressionMediate {
         // UnaryExp → Ident '(' [FuncRParams] ')'
         // UnaryExp → UnaryOp UnaryExp
 
-        //TODO add func
+        //TODO UnaryExp → Ident '(' [FuncRParams] ')'
         if( getWordMed(poiMed).type == Token.IDENFR && getWordMed(poiMed+1).type == Token.LPARENT ){
 
             String str = "";
@@ -140,9 +140,8 @@ public class ExpressionMediate {
             if( getWordMed(poiMed).type == Token.LPARENT ) {
                 str += "(";
                 poiMed++;
-                while (getWordMed(poiMed).type != Token.RPARENT) {
+                while (getWordMed(poiMed).type != Token.RPARENT)
                     str += FuncRParamsMediate.analysis( fun );
-                }
                 str += ")";
                 poiMed++;
             }
@@ -159,14 +158,14 @@ public class ExpressionMediate {
                 e.addExpSymbol( reg, 1, false);
             }
         }
-
+        //TODO UnaryExp → UnaryOp UnaryExp
         else if( getWordMed(poiMed).type == Token.PLUS || getWordMed(poiMed).type == Token.MINU || getWordMed(poiMed).type == Token.NOT ){
             String str = getWordMed(poiMed).token;
             UnaryOpMed();
             UnaryExp( e );
             e.addExpSymbol( str, 3, false);
         }
-
+        //TODO UnaryExp → PrimaryExp
         else{
             PrimaryExp( e );
         }
@@ -204,10 +203,10 @@ public class ExpressionMediate {
         return expsym;
     }
 
-    public static void RelExp( ExpAnalyse e ) throws IOException {
+    public static int RelExp( ExpAnalyse e ) throws IOException {
 
         //TODO 防止出现 if( a + b )这种情况。
-        boolean single = true;
+        int signal = 1; // 0 -> if( a == 1 ...); 1 -> if( a ); 2 -> if( !a )
         ExpSymbol expsym = AddExp();
         e.addExpSymbol( expsym.value, 1, expsym.haveValue );
 
@@ -216,7 +215,7 @@ public class ExpressionMediate {
                 getWordMed(poiMed).type == Token.GEQ ||
                 getWordMed(poiMed).type == Token.LEQ
         ){
-            single = false;
+            signal = 0;
             String str = getWordMed(poiMed).token;
             poiMed++;
             expsym = AddExp();
@@ -224,20 +223,23 @@ public class ExpressionMediate {
             e.addExpSymbol( str, 0, false );
         }
 
-        if( !single ){
-            //TODO 添加额外条件，if( a + b ) <==> if( a + b != 0 )
-            e.addExpSymbol( "0", 1, true );
-            e.addExpSymbol( "!=", 0, false );
-        }
+        return signal;
     }
 
     public static void EqExp( ExpAnalyse e ) throws IOException {
-        RelExp(e);
+        int signal;
+        signal = RelExp(e);
         while(getWordMed(poiMed).type == Token.EQL || getWordMed(poiMed).type == Token.NEQ ){
+            signal = 0;
             String str = getWordMed(poiMed).token;
             poiMed++;
             RelExp(e);
             e.addExpSymbol( str, 0, false );
+        }
+        if( signal == 1 ){
+            //TODO 添加额外条件，if( a + b ) <==> if( (a + b) != 0 )
+            e.addExpSymbol( "0", 1, true );
+            e.addExpSymbol( "!=", 0, false );
         }
     }
 

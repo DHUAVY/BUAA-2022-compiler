@@ -1,11 +1,11 @@
 package IntermediateCodeSystem;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class ExpAnalyse {
 
     public int poi = 0;
-//    public boolean plusMinus; // 当前表达式最后是正是负。  true + : false -
 
     public ExpSymbol[] expTable = new ExpSymbol[10000];
 
@@ -18,7 +18,6 @@ public class ExpAnalyse {
     public void addExpSymbol( ExpSymbol expsym ){
         expTable[ poi ] = expsym;
         poi ++;
-//        System.out.println( expsym );
     }
 
     public int calculate( String op, int a, int b ) throws IOException {
@@ -116,14 +115,15 @@ public class ExpAnalyse {
     }
 
     public ExpSymbol quaternion() throws IOException {
-        String str = "";
-        String token = "";
 
         ExpSymbol a;
         ExpSymbol b;
+        int top = 0;
+        String str = "";
+        String token = "";
+        boolean haveNot = false;
 
         ExpSymbol[] stack = new ExpSymbol[100000];
-        int top = 0;
 
         if( poi > 1 ){
             for( int i = 0; i <= poi-1; i++ ){
@@ -153,11 +153,22 @@ public class ExpAnalyse {
                     }
                 }
                 else if(  expTable[i].type == 3 ){
-                    ExpSymbol tran = stack[--top];
-                    stack[top++] = new ExpSymbol("0", 1, true );
-                    stack[top++] = tran;
-                    expTable[i].type = 0;
-                    i = i - 1;
+                    if( !expTable[i].value.equals("!") ){
+                        ExpSymbol tran = stack[--top];
+                        stack[top++] = new ExpSymbol("0", 1, true );
+                        stack[top++] = tran;
+                        expTable[i].type = 0;
+                        i = i - 1;
+                    }
+                    else{
+                        ExpSymbol tran = stack[--top];
+                        String newReg = TemporaryRegister.getFreeReg();
+                        str = newReg + " = xor i32 " + tran.value + ", 1";
+                        IntermediateCode.writeLlvmIr( str, true );
+                        tran.value = newReg;
+                        tran.haveValue = false;
+                        stack[top++] = tran;
+                    }
                 }
             }
             return stack[--top];
