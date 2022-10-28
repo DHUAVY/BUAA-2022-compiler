@@ -17,7 +17,8 @@ public class ConstInitValMediate {
             poiMed++;
             if( getWordMed(poiMed).type == Token.RBRACE ){
                 poiMed++;
-            }else{
+            }
+            else{
                 analyse();
                 while( getWordMed(poiMed).type == Token.COMMA){
                     poiMed++;

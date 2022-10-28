@@ -4,6 +4,7 @@ import LexicalSystem.Token;
 
 import java.io.IOException;
 
+import static IntermediateCodeSystem.ExpAnalyse.*;
 import static IntermediateCodeSystem.IntermediateCode.*;
 
 public class VarDefMediate {
@@ -70,7 +71,7 @@ public class VarDefMediate {
                     str = reg + " = alloca i32";
                     IntermediateCode.writeLlvmIr( str, true );
 
-                    if( InitValMediate.initValList[0].haveValue ){
+                    if( InitValMediate.initValList[0].haveValue && mode == varMode ){
                         symmed.safe = true;
                         symmed.value = Integer.parseInt( InitValMediate.initValList[0].value );
                     }

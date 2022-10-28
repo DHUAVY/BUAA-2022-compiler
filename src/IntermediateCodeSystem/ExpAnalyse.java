@@ -1,12 +1,16 @@
 package IntermediateCodeSystem;
 
+import static IntermediateCodeSystem.ExpSymbol.*;
 import java.io.IOException;
 import java.util.Objects;
 
 public class ExpAnalyse {
 
-    public int poi = 0;
+    public static int mode;
+    public final static int funcMode = 0;
+    public final static int varMode = 1;
 
+    public int poi = 0;
     public ExpSymbol[] expTable = new ExpSymbol[10000];
 
     public void addExpSymbol( String token, int type, boolean haveValue){
@@ -114,6 +118,15 @@ public class ExpAnalyse {
         IntermediateCode.writeLlvmIr( str, true);
     }
 
+    public boolean whenBackI1( String str ){
+        return str.equals(">") || str.equals("<") || str.equals(">=") || str.equals("<=") ||
+                str.equals("==") || str.equals("!=");
+    }
+
+    public boolean whenNeedI32( String str ){
+        return !str.equals("&&") && !str.equals("||");
+    }
+
     public ExpSymbol quaternion() throws IOException {
 
         ExpSymbol a;
@@ -135,7 +148,7 @@ public class ExpAnalyse {
                     a = stack[--top];
                     // 取得当前栈顶的两个操作数。
 
-                    if( a.haveValue && b.haveValue ){ // 当前是可以直接计算的常数。
+                    if( a.haveValue && b.haveValue && mode == varMode ){ // 当前是可以直接计算的常数。
                         String op = expTable[i].value;
                         int ret;
                         int aVal = Integer.parseInt( a.value );
@@ -147,8 +160,16 @@ public class ExpAnalyse {
                     }
                     else{
                         token = TemporaryRegister.getFreeReg();
+                        if( whenNeedI32(expTable[i].value) ){
+                            b.changeI1ToI32();
+                            a.changeI1ToI32();
+                        }
 
-                        stack[top++] = new ExpSymbol(token, 1, false);
+                        if( whenBackI1( expTable[i].value ))
+                            stack[top++] = new ExpSymbol(token, 1, false, i1);
+                        else
+                            stack[top++] = new ExpSymbol(token, 1, false);
+
                         regCalculate(expTable[i].value, a.value, b.value, token );
                     }
                 }
@@ -162,12 +183,18 @@ public class ExpAnalyse {
                     }
                     else{
                         ExpSymbol tran = stack[--top];
-                        String newReg = TemporaryRegister.getFreeReg();
-                        str = newReg + " = xor i32 " + tran.value + ", 1";
-                        IntermediateCode.writeLlvmIr( str, true );
-                        tran.value = newReg;
-                        tran.haveValue = false;
+                        stack[top++] = new ExpSymbol("0", 1, true );
                         stack[top++] = tran;
+                        expTable[i].type = 0;
+                        expTable[i].value = "==";
+                        i = i - 1;
+//                        ExpSymbol tran = stack[--top];
+//                        String newReg = TemporaryRegister.getFreeReg();
+//                        str = newReg + " = xor i32 " + tran.value + ", 1";
+//                        IntermediateCode.writeLlvmIr( str, true );
+//                        tran.value = newReg;
+//                        tran.haveValue = false;
+//                        stack[top++] = tran;
                     }
                 }
             }

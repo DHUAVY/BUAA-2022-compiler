@@ -4,6 +4,7 @@ import LexicalSystem.Token;
 
 import java.io.IOException;
 
+import static IntermediateCodeSystem.ExpAnalyse.*;
 import static IntermediateCodeSystem.IntermediateCode.getWordMed;
 import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
@@ -13,7 +14,9 @@ public class CompUnitMediate {
         SymbolTableMediate.init();
         IOFuncDec();
 
-        //TODO 定义变量时不对文件进行写入。
+        //TODO 在定义全局变量时，一定可以求出全部的值。
+        mode = varMode;
+        //TODO 定义变量时，其中的运算表达式，不对文件进行写入。
         IntermediateCode.writeInFile = false;
         while( (getWordMed(poiMed).type == Token.CONSTTK ||
                 getWordMed(poiMed + 2 ).type != Token.LPARENT) &&
@@ -24,6 +27,7 @@ public class CompUnitMediate {
         IntermediateCode.writeInFile = true;
         IntermediateCode.writeLlvmIr("", false); // 插入空行，方便阅读。
 
+        mode = funcMode;
         while( getWordMed( poiMed + 1).type != Token.MAINTK && getWordMed( poiMed + 1).type != 0 ){
             FuncDefMediate.analysis();
             SymbolTableMediate.globalVarInit();

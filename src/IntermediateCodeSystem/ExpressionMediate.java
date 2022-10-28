@@ -2,7 +2,7 @@ package IntermediateCodeSystem;
 import LexicalSystem.Token;
 
 import java.io.IOException;
-
+import static IntermediateCodeSystem.ExpAnalyse.*;
 import static IntermediateCodeSystem.IntermediateCode.*;
 
 
@@ -48,7 +48,7 @@ public class ExpressionMediate {
                 if( symmed.type == 0 ){
                     String reg = TemporaryRegister.getFreeReg();
 
-                    if( symmed.safe ){
+                    if( symmed.safe && mode == varMode ){
                         //str = reg + " = load i32, i32* " + symmed.value;
                         e.addExpSymbol( String.valueOf(symmed.value), 1, symmed.safe);
                     }
@@ -72,7 +72,9 @@ public class ExpressionMediate {
                     str = reg + IntermediateCode.getPoiOneDim( symmed.reg, lvsym.poi2 );
                     IntermediateCode.writeLlvmIr( str, true);
                     //TODO poi2为常数且对应的取值可信赖。
-                    if( IntermediateCode.isNumeric(lvsym.poi2) && symmed.safeList[Integer.parseInt( lvsym.poi2 )]){
+                    if( IntermediateCode.isNumeric(lvsym.poi2) &&
+                        symmed.safeList[Integer.parseInt( lvsym.poi2 )] &&
+                        mode == varMode){
                         int poi = Integer.parseInt( lvsym.poi2 );
                         if( symmed.safeList[poi] )
                             e.addExpSymbol( String.valueOf(symmed.valueList[poi]), 1, true);
@@ -104,7 +106,8 @@ public class ExpressionMediate {
 
                 if( IntermediateCode.isNumeric(lvsym.poi1) &&
                     IntermediateCode.isNumeric(lvsym.poi2) &&
-                    symmed.safeList[Integer.parseInt( lvsym.poi1 ) * symmed.dim2 + Integer.parseInt( lvsym.poi2 )]
+                    symmed.safeList[Integer.parseInt( lvsym.poi1 ) * symmed.dim2 + Integer.parseInt( lvsym.poi2 )] &&
+                    mode == varMode
                 ){
                     int poi = Integer.parseInt( lvsym.poi1 ) * symmed.dim2 + Integer.parseInt( lvsym.poi2 );
                     if( symmed.safeList[poi] )
@@ -210,7 +213,7 @@ public class ExpressionMediate {
         //TODO 防止出现 if( a + b )这种情况。
         int signal = 1; // 0 -> if( a == 1 ...); 1 -> if( a ); 2 -> if( !a )
         ExpSymbol expsym = AddExp();
-        e.addExpSymbol( expsym.value, 1, expsym.haveValue );
+        e.addExpSymbol( expsym );
 
         while( getWordMed(poiMed).type == Token.LSS ||
                 getWordMed(poiMed).type == Token.GRE ||
@@ -272,7 +275,12 @@ public class ExpressionMediate {
     public static ExpSymbol ConstExp() throws IOException{
 
         ExpSymbol expsym;
+        int md = mode;
+
+        //TODO 对于ConstExp而言，此时一定能够算出定值。
+        mode = varMode;
         expsym = AddExp();
+        mode = md;
 
         return expsym;
     }

@@ -4,6 +4,7 @@ import LexicalSystem.Token;
 
 import java.io.IOException;
 
+import static  IntermediateCodeSystem.ExpAnalyse.*;
 import static IntermediateCodeSystem.IntermediateCode.*;
 
 public class VarDeclMediate {

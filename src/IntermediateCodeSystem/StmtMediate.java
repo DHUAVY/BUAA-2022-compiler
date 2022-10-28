@@ -4,8 +4,8 @@ import GrammaticalSystem.Expression;
 import LexicalSystem.Token;
 import java.io.IOException;
 
-import static GrammaticalSystem.GrammaticalAnalysis.*;
-import static GrammaticalSystem.GrammaticalAnalysis.poi;
+import static IntermediateCodeSystem.ExpAnalyse.*;
+import static IntermediateCodeSystem.LoopMediate.*;
 import static IntermediateCodeSystem.IntermediateCode.getWordMed;
 import static IntermediateCodeSystem.IntermediateCode.poiMed;
 
@@ -26,6 +26,9 @@ public class StmtMediate {
     public static int ioPoi = 0;
     public static int ioNowPoi = 0;
     public static ExpSymbol[] ioList = new ExpSymbol[10000];
+
+    public final static int IF = 0;
+    public final static int WHILE = 1;
 
     public static boolean lvalEqualsExpJudge() throws IOException {
         int poiMedInit = poiMed;
@@ -56,6 +59,8 @@ public class StmtMediate {
         else if( getWordMed(poiMed).type == Token.WHILETK ){
             // Stmt → 'while' '(' Cond ')' Stmt
             handWithWhile();
+
+            loopTop--; // 当前的循环结束。
         }
         else if( getWordMed(poiMed).type == Token.BREAKTK ){
             // Stmt → 'break' ';'
@@ -63,6 +68,8 @@ public class StmtMediate {
             if( getWordMed(poiMed).type == Token.SEMICN ){
                 poiMed++;
             }
+            String str = "br label " + loopList[loopTop-1].loopEnd;
+            IntermediateCode.writeLlvmIr(str, true);
         }
         else if( getWordMed(poiMed).type == Token.CONTINUETK ){
             // Stmt → 'continue' ';'
@@ -70,6 +77,8 @@ public class StmtMediate {
             if( getWordMed(poiMed).type == Token.SEMICN ){
                 poiMed++;
             }
+            String str = "br label " + loopList[loopTop-1].loopHead;
+            IntermediateCode.writeLlvmIr(str, true);
         }
         else if( getWordMed(poiMed).type == Token.RETURNTK ){
             // Stmt → 'return' [Exp] ';'
@@ -84,8 +93,8 @@ public class StmtMediate {
                 String str = "ret i32 " + expsym.value;
                 IntermediateCode.writeLlvmIr( str, true );
 
-                if( getWord(poi).type == Token.SEMICN ) {
-                    poi++;
+                if( getWordMed(poiMed).type == Token.SEMICN ) {
+                    poiMed++;
                 }
             }
         }
@@ -208,7 +217,7 @@ public class StmtMediate {
         symmed.globalVarChange();
 
         if( lvsym.dim == 0 ){ // 变量维度为0。
-            if( exp.haveValue ){
+            if( exp.haveValue && mode == varMode){
                 symmed.safe = true;
                 symmed.value = Integer.parseInt( exp.value );
             }
@@ -259,7 +268,7 @@ public class StmtMediate {
         poiMed++;
         if(getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
-            nextReg = CondMediate.analysis(); // Cond
+            nextReg = CondMediate.analysis( StmtMediate.IF ); // Cond
             if(getWordMed(poiMed).type == Token.RPARENT ){
                 poiMed++;
                 LabelMediate.labelPrint();
@@ -279,15 +288,19 @@ public class StmtMediate {
 
     public static void handWithWhile() throws IOException {
         // Stmt → 'while' '(' Cond ')' Stmt
+        String nextReg;
         poiMed++;
         if(getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
-            CondMediate.analysis(); // Cond
+            nextReg = CondMediate.analysis( StmtMediate.WHILE ); // Cond
             if(getWordMed(poiMed).type == Token.RPARENT ){
                 poiMed++;
+                LabelMediate.labelPrint();
                 analysis(); // Stmt
+                IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
             }
         }
+        LabelMediate.labelPrint();
     }
 
     public static void handWithPrintf() throws IOException{
