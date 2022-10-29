@@ -29,6 +29,9 @@ public class BlockMediate {
             poiMed++;
         }
 
+        //TODO 在每一个Block结束之后都将全局变量重置。
+        SymbolTableMediate.globalVarInit();
+
         IntermediateCode.nowMediateDimension = IntermediateCode.symbolTableMediateList[IntermediateCode.nowMediateDimension].fatherId; // 回退当前维度至其本身的父维度。
     }
 

@@ -90,6 +90,7 @@ public class ExpressionMediate {
                 else if( symmed.type == 2 ){
                     str = reg + IntermediateCode.getArrOneDim( symmed.reg, String.valueOf(symmed.dim2), lvsym.poi2 );
                     IntermediateCode.writeLlvmIr( str, true);
+                    e.addExpSymbol( reg, 1, false);
                 }
             }
             /*--------------------------变量维度为2--------------------------*/
@@ -224,7 +225,7 @@ public class ExpressionMediate {
             String str = getWordMed(poiMed).token;
             poiMed++;
             expsym = AddExp();
-            e.addExpSymbol( expsym.value, 1, expsym.haveValue );
+            e.addExpSymbol( expsym );
             e.addExpSymbol( str, 0, false );
         }
 

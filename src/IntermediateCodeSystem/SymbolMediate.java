@@ -9,7 +9,7 @@ public class SymbolMediate {
         public String token; // 当前单词所对应的字符串。
         public boolean con; // 1 -> const, 0 -> var
         public boolean initial; // 当前单词在当前模块内是否经过初始化。
-        public int lltype; // 0 -> i32, 1 -> i8
+        public int lltype; // 0 -> i32, 1 -> i1
         // 基础信息
 
         public int type; // 0 -> a, 1 -> a[], 2 -> a[dim1][dim2], -1 -> func

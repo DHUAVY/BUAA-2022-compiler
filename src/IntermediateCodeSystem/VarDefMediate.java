@@ -119,7 +119,7 @@ public class VarDefMediate {
                         str = "store i32 " + InitValMediate.initValList[i].value + ", i32* " + reg;
                         writeLlvmIr( str, true);
 
-                        if( InitValMediate.initValList[i].haveValue ){
+                        if( InitValMediate.initValList[i].haveValue && mode == varMode ){
                             symmed.safeList[i] = true;
                             symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[0].value );
                         }
@@ -176,7 +176,7 @@ public class VarDefMediate {
 
                         str = "store i32 " + InitValMediate.initValList[i].value + ", i32* " + reg;
                         writeLlvmIr( str, true);
-                        if( InitValMediate.initValList[i].haveValue ){
+                        if( InitValMediate.initValList[i].haveValue && mode == varMode ){
                             symmed.safeList[i] = true;
                             symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[i].value );
                         }

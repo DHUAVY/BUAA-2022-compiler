@@ -163,7 +163,7 @@ public class ConstDefMediate {
                         writeLlvmIr( str, true );
 
                         str = "store i32 " + ConstInitValMediate.initValList[i] + ", i32* " + reg;
-                        IntermediateCode.writeGlobalVarDef( str );
+                        IntermediateCode.writeLlvmIr( str, true );
 
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );

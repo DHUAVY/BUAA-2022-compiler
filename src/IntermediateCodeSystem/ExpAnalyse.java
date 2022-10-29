@@ -131,10 +131,8 @@ public class ExpAnalyse {
 
         ExpSymbol a;
         ExpSymbol b;
-        int top = 0;
-        String str = "";
         String token = "";
-        boolean haveNot = false;
+        int top = 0;
 
         ExpSymbol[] stack = new ExpSymbol[100000];
 
@@ -174,28 +172,13 @@ public class ExpAnalyse {
                     }
                 }
                 else if(  expTable[i].type == 3 ){
-                    if( !expTable[i].value.equals("!") ){
-                        ExpSymbol tran = stack[--top];
-                        stack[top++] = new ExpSymbol("0", 1, true );
-                        stack[top++] = tran;
-                        expTable[i].type = 0;
-                        i = i - 1;
-                    }
-                    else{
-                        ExpSymbol tran = stack[--top];
-                        stack[top++] = new ExpSymbol("0", 1, true );
-                        stack[top++] = tran;
-                        expTable[i].type = 0;
+                    ExpSymbol tran = stack[--top];
+                    stack[top++] = new ExpSymbol("0", 1, true );
+                    stack[top++] = tran;
+                    expTable[i].type = 0;
+                    if( expTable[i].value.equals("!") )
                         expTable[i].value = "==";
-                        i = i - 1;
-//                        ExpSymbol tran = stack[--top];
-//                        String newReg = TemporaryRegister.getFreeReg();
-//                        str = newReg + " = xor i32 " + tran.value + ", 1";
-//                        IntermediateCode.writeLlvmIr( str, true );
-//                        tran.value = newReg;
-//                        tran.haveValue = false;
-//                        stack[top++] = tran;
-                    }
+                    i = i - 1;
                 }
             }
             return stack[--top];
