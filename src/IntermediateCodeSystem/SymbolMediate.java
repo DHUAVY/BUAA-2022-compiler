@@ -20,8 +20,8 @@ public class SymbolMediate {
         public String reg; // 当前对应的寄存器。
         public boolean safe; // 当前单词的取值是否能够使用。非全局变量且未定义初值，函数形参等情况下即为不可使用。
         public int value; // type = 0，则会有当前对应的value。
-        public int[] valueList = new int [10000];
-        public boolean[] safeList = new boolean[10000];
+        public int[] valueList = new int [300000];
+        public boolean[] safeList = new boolean[300000];
         // 取值信息
 
         @Override
@@ -33,34 +33,23 @@ public class SymbolMediate {
         }
 
         public void notSafe(){
-                this.safe = false;
-                this.value = 0;
-                for( int i = 0; i < 10000; i++ ){
-                        this.valueList[i] = 0;
-                        this.safeList[i] = false;
-                }
+            this.safe = false;
+            this.value = 0;
+            for( int i = 0; i < 10000; i++ ){
+                this.valueList[i] = 0;
+                this.safeList[i] = false;
+            }
         }
 
         public void globalVarChange() throws IOException {
-                if( !initial && dimension == 0 && type != 0 ){
-                        String newReg = TemporaryRegister.getFreeReg();
-                        initial = true;
-                        if( type == 1 ){
-                                IntermediateCode.changeOneDimensionPatten(
-                                        newReg,
-                                        reg,
-                                        String.valueOf(dim2)
-                                );
-                        }
-                        else if( type == 2 ){
-                                IntermediateCode.changeTwoDimensionPatten(
-                                        newReg,
-                                        reg,
-                                        String.valueOf(dim1),
-                                        String.valueOf(dim2)
-                                );
-                        }
-                        reg = newReg;
-                }
+            if( !initial && dimension == 0 && type != 0 ){
+                String newReg = TemporaryRegister.getFreeReg();
+                initial = true;
+                if( type == 1 )
+                    IntermediateCode.changeOneDimensionPatten( newReg, reg, String.valueOf(dim2) );
+                else if( type == 2 )
+                    IntermediateCode.changeTwoDimensionPatten(newReg, reg, String.valueOf(dim1), String.valueOf(dim2));
+                reg = newReg;
+            }
         }
 }

@@ -249,28 +249,58 @@ public class ExpressionMediate {
         }
     }
 
-    public static void LAndExp(ExpAnalyse e) throws IOException {
+    public static void LAndExp( String realTrueLabel, String realFalseLabel ) throws IOException {
         // LAndExp → EqExp | LAndExp '&&' EqExp
+        ExpAnalyse e = new ExpAnalyse();
         EqExp(e);
+
+        //TODO 短路求值
+        ExpSymbol expsym = e.quaternion();
+
+         LabelMediate falseLabel = LabelMediate.getFreeLabel();
+        // 当前值为false直接跳转。
+        LabelMediate trueLabel = LabelMediate.getFreeLabel();
+        // 当前值为true继续计算。
+        String str = "br i1 " + expsym.value + ", label " + trueLabel.reg + ", label " + falseLabel.reg;
+        IntermediateCode.writeLlvmIr( str, true );
+        LabelMediate.labelPrint();
+        // 打印trueLabel。
+
         while(getWordMed(poiMed).type == Token.AND){
-            String str = getWordMed(poiMed).token;
+            str = getWordMed(poiMed).token;
             poiMed++;
             EqExp(e);
             e.addExpSymbol( str, 0, false );
+
+            expsym = e.quaternion();
+            trueLabel = LabelMediate.getFreeLabel();
+            str = "br i1 " + expsym.value + ", label " + trueLabel.reg + ", label " + falseLabel.reg;
+            // 当前值为true继续计算，为false直接跳转。
+            IntermediateCode.writeLlvmIr( str, true );
+            LabelMediate.labelPrint();
+            // 打印trueLabel。
         }
+        str = "br label " + realTrueLabel;
+        IntermediateCode.writeLlvmIr( str, true );
+
+        LabelMediate.labelPrint();
+        // 打印falseLabel。
+
     }
 
-    public static ExpSymbol LOrExp(ExpAnalyse e) throws IOException {
+    public static void LOrExp( String realTrueLabel, String realFalseLabel ) throws IOException {
         // LOrExp → LAndExp | LOrExp '||' LAndExp
-        LAndExp(e);
+
+        //TODO 短路求值
+        LAndExp(realTrueLabel, realFalseLabel);
+
         while(getWordMed(poiMed).type == Token.OR){
-            String str = getWordMed(poiMed).token;
             poiMed++;
-            LAndExp(e);
-            e.addExpSymbol( str, 0, false );
+            LAndExp(realTrueLabel, realFalseLabel);
         }
-        ExpSymbol expsym = e.quaternion();
-        return expsym;
+
+        String str = "br label " + realFalseLabel;
+        IntermediateCode.writeLlvmIr( str, true );
     }
 
     public static ExpSymbol ConstExp() throws IOException{

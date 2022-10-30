@@ -135,6 +135,7 @@ public class StmtMediate {
         // Stmt → LVal '=' 'getint''('')'';'
 
         SymbolMediate symmed = SymbolTableMediate.findSymbol( lvsym.token );
+        symmed.globalVarChange();
 
         if( lvsym.dim == 0 ){ // 变量维度为0。
             symmed.safe = false;
@@ -312,7 +313,6 @@ public class StmtMediate {
             if (getWordMed(poiMed).type == Token.STRCON ){
 
                 str = getWordMed(poiMed).token;
-                System.out.println( str );
                 poiMed++;
                 while( getWordMed(poiMed).type == Token.COMMA){
                     poiMed++;

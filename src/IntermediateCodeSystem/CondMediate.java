@@ -12,7 +12,6 @@ public class CondMediate {
     public static String analysis( int type ) throws IOException {
         // Cond → LOrExp
         String reg = "";
-        ExpAnalyse e = new ExpAnalyse();
 
         //TODO 先存假标签，再存真标签，保持在栈里的位置。
         LabelMediate nextLabel = LabelMediate.getFreeLabel(); // 后续的正常代码
@@ -27,15 +26,11 @@ public class CondMediate {
             LoopMediate.addLoop( trueLabel.reg, nextLabel.reg );
         }
 
-        ExpSymbol expsym = ExpressionMediate.LOrExp(e);
-
         if( type == StmtMediate.WHILE ){
-            String str = "br i1 " + expsym.value + ", label " + falseLabel.reg + ", label " + nextLabel.reg;
-            IntermediateCode.writeLlvmIr( str, true );
+            ExpressionMediate.LOrExp(falseLabel.reg, nextLabel.reg );
         }
         else if(  type == StmtMediate.IF  ){
-            String str = "br i1 " + expsym.value + ", label " + trueLabel.reg + ", label " + falseLabel.reg;
-            IntermediateCode.writeLlvmIr( str, true );
+            ExpressionMediate.LOrExp(trueLabel.reg, falseLabel.reg );
             reg = nextLabel.reg;
         }
 

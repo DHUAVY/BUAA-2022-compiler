@@ -24,6 +24,9 @@ public class LabelMediate {
         LabelMediate labmed = labelStack[--labelTop];
         IntermediateCode.writeLlvmIr("", false);
         IntermediateCode.writeLlvmIr( labmed.label + ":", false );
+
+        //TODO 在每次添加新标签后都需要对当前全局变量进行重置。
+        SymbolTableMediate.globalVarInit();
     }
 
 }

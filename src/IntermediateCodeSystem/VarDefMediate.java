@@ -286,7 +286,7 @@ public class VarDefMediate {
                     str = reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] zeroinitializer";
 
                     IntermediateCode.writeGlobalVarDef( str );
-                    for( int i = 0; i < symmed.dim2 * symmed.dim2; i++ ){
+                    for( int i = 0; i < symmed.dim1 * symmed.dim2; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = 0;
                     }

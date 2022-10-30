@@ -154,7 +154,6 @@ public class ExpAnalyse {
 
                         ret = calculate( op, aVal, bVal );
                         stack[top++] = new ExpSymbol( String.valueOf(ret), 1, true);
-                        System.out.println( ret ); // 观测常数的计算结果。
                     }
                     else{
                         token = TemporaryRegister.getFreeReg();
