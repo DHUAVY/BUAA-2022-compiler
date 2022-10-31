@@ -23,7 +23,7 @@ public class CompUnit {
 
         MainFuncDef.Analysis();
 
-        writeGrammer("CompUnit");
+        //writeGrammer("CompUnit");
     }
 
 }

@@ -12,7 +12,7 @@ public class ConstDecl {
         // ConstDecl → 'const' BType ConstDef { ',' ConstDef } ';'
 
         if( getWord(poi).type == Token.CONSTTK ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
         }else{
             wrong();
@@ -23,19 +23,19 @@ public class ConstDecl {
         ConstDef.ConstDefAnalysis();
 
         while( getWord(poi).type == Token.COMMA){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             ConstDef.ConstDefAnalysis();
         }
 
         if( getWord(poi).type == Token.SEMICN ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
         }else{
             WithOutSemiconError.analyse( poi - 1 );
         }
 
-        writeGrammer("ConstDecl");
+//        writeGrammer("ConstDecl");
     }
 
 }

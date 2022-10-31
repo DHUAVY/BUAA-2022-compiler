@@ -44,10 +44,10 @@ public class FuncDef {
         Ident.ident();
 
         if( getWord(poi).type == Token.LPARENT ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             if( getWord(poi).type == Token.RPARENT ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
 
                 if( !flag ){
@@ -70,7 +70,7 @@ public class FuncDef {
             else{
                 FuncFParams.Analysis();
                 if( getWord(poi).type == Token.RPARENT ){
-                    writeWord( getWord(poi) );
+                    //writeWord( getWord(poi) );
                     poi++;
 
                     if( !flag ){
@@ -101,7 +101,7 @@ public class FuncDef {
             WithOutReturnError.analyse();
         }
 
-        writeGrammer("FuncDef");
+//        writeGrammer("FuncDef");
     }
 
     public static void completeFuncInfo( Lexical lex ){ // 复制当前的函数的参数信息。

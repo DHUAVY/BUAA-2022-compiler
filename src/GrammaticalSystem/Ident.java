@@ -12,7 +12,7 @@ public class Ident {
 
     public static void ident() throws IOException {
         if( getWord(poi).type == Token.IDENFR ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
         }else{
             wrong();

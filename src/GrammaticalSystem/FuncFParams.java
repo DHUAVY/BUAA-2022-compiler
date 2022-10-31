@@ -13,12 +13,12 @@ public class FuncFParams {
         FuncDef.nowFuncParamNum ++; // 每有一个变量声明，当前函数的参数数量加1。
 
         while( getWord(poi).type == Token.COMMA ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             FuncFParam.Analysis();
             FuncDef.nowFuncParamNum ++; // 每有一个变量声明，当前函数的参数数量加1。
         }
 
-        writeGrammer("FuncFParams");
+//        writeGrammer("FuncFParams");
     }
 }

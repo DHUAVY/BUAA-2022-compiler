@@ -64,7 +64,6 @@ public class GrammaticalAnalysis {
 
         if( notWrite )
             return;
-
         String str = LexicalAnalysis.getToken( lex.type ) + " " + lex.token + "\n";
         if( FileControl.GrammaticalSystemPrint ){
             Files.write(Paths.get(fileName), str.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
@@ -74,7 +73,7 @@ public class GrammaticalAnalysis {
 
     public static void BType() throws IOException {
         if( getWord(poi).type == Token.INTTK ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
         }else{
             wrong();
@@ -88,9 +87,9 @@ public class GrammaticalAnalysis {
             if( getWord(poi).type == Token.INTTK ){
                 ret = 1;
             }
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
-            writeGrammer("FuncType");
+            //writeGrammer("FuncType");
             return ret ; // 0 -> void, 1 -> int
         }else{
             wrong();
@@ -99,16 +98,16 @@ public class GrammaticalAnalysis {
     }
 
     public static void Number() throws IOException{
-        writeWord( getWord(poi) );
+        //writeWord( getWord(poi) );
         poi++;
-        writeGrammer("Number");
+        //writeGrammer("Number");
     }
 
     public static void UnaryOp() throws IOException{
         if( getWord(poi).type == Token.PLUS || getWord(poi).type == Token.MINU || getWord(poi).type == Token.NOT){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
-            writeGrammer("UnaryOp");
+            //writeGrammer("UnaryOp");
         }
         else{
             wrong();

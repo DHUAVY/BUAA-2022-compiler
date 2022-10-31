@@ -26,11 +26,4 @@ public class SymbolTable {
         this.directory.put( lex.token, newSymbol );
     }
 
-    @Override
-    public String toString(){
-        return  "This is " + id + " SymbolTable!" + '\n' +
-                "The father id is " + fatherId + '!' + '\n' +
-                "The HashMap is " + directory + '!' + '\n';
-    }
-
 }

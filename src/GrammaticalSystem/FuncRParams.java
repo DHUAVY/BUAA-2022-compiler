@@ -29,7 +29,7 @@ public class FuncRParams {
         nowFuncParamNum ++;
 
         while(getWord(poi).type == Token.COMMA){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
 
             type = Expression.Exp();
@@ -46,7 +46,7 @@ public class FuncRParams {
 
         funcNum--;
 
-        writeGrammer("FuncRParams");
+//        writeGrammer("FuncRParams");
     }
 
 }

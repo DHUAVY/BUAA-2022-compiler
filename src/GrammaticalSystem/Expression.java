@@ -20,7 +20,7 @@ public class Expression {
 
         ret = AddExp();
 
-        writeGrammer("Exp");
+//        writeGrammer("Exp");
         return ret;
     }
 
@@ -28,27 +28,27 @@ public class Expression {
         // PrimaryExp → '(' Exp ')' | LVal | Number
         int ret = 0;
         if( getWord(poi).type == Token.LPARENT ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             ret = Exp();
 
             if( getWord(poi).type == Token.RPARENT ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutParenError.analyse( poi - 1);
             }
 
-            writeGrammer("PrimaryExp");
+//            writeGrammer("PrimaryExp");
         }
         else if( getWord(poi).type == Token.INTCON ){
             Number();
-            writeGrammer("PrimaryExp");
+//            writeGrammer("PrimaryExp");
             ret = 0; // 返回值为Number，因此一定为int类型。
         }
         else if( getWord(poi).type == Token.IDENFR ){
             ret = LVal.Analysis( 0 );
-            writeGrammer("PrimaryExp");
+//            writeGrammer("PrimaryExp");
         }
         else{
             wrong();
@@ -122,21 +122,21 @@ public class Expression {
             ret = PrimaryExp();
         }
 
-        writeGrammer("UnaryExp");
+//        writeGrammer("UnaryExp");
         return ret;
     }
 
     public static int MulExp() throws IOException {
         int ret;
         ret = UnaryExp();
-        writeGrammer("MulExp");
+//        writeGrammer("MulExp");
         while( getWord(poi).type == Token.MULT || getWord(poi).type == Token.DIV || getWord(poi).type == Token.MOD ){
 
             writeWord(getWord(poi));
             poi++;
             UnaryExp();
 
-            writeGrammer("MulExp");
+//            writeGrammer("MulExp");
         }
         return ret;
     }
@@ -144,67 +144,67 @@ public class Expression {
     public static int AddExp() throws IOException {
         int ret;
         ret = MulExp();
-        writeGrammer("AddExp");
+//        writeGrammer("AddExp");
         while( getWord(poi).type == Token.PLUS || getWord(poi).type == Token.MINU ){
 
             writeWord(getWord(poi));
             poi++;
             MulExp();
 
-            writeGrammer("AddExp");
+//            writeGrammer("AddExp");
         }
         return ret;
     }
 
     public static void RelExp() throws IOException {
         AddExp();
-        writeGrammer("RelExp");
+//        writeGrammer("RelExp");
         while( getWord(poi).type == Token.LSS || getWord(poi).type == Token.GRE ||
                 getWord(poi).type == Token.GEQ || getWord(poi).type == Token.LEQ){
             writeWord(getWord(poi));
             poi++;
             AddExp();
-            writeGrammer("RelExp");
+//            writeGrammer("RelExp");
         }
     }
 
     public static void EqExp() throws IOException {
         RelExp();
-        writeGrammer("EqExp");
+//        writeGrammer("EqExp");
         while(getWord(poi).type == Token.EQL || getWord(poi).type == Token.NEQ ){
             writeWord(getWord(poi));
             poi++;
             RelExp();
-            writeGrammer("EqExp");
+//            writeGrammer("EqExp");
         }
     }
 
     public static void LAndExp() throws IOException {
         // LAndExp → EqExp | LAndExp '&&' EqExp
         EqExp();
-        writeGrammer("LAndExp");
+//        writeGrammer("LAndExp");
         while(getWord(poi).type == Token.AND){
             writeWord(getWord(poi));
             poi++;
             EqExp();
-            writeGrammer("LAndExp");
+//            writeGrammer("LAndExp");
         }
     }
 
     public static void LOrExp() throws IOException {
         // LOrExp → LAndExp | LOrExp '||' LAndExp
         LAndExp();
-        writeGrammer("LOrExp");
+//        writeGrammer("LOrExp");
         while(getWord(poi).type == Token.OR){
             writeWord(getWord(poi));
             poi++;
             LAndExp();
-            writeGrammer("LOrExp");
+//            writeGrammer("LOrExp");
         }
     }
 
     public static void ConstExp() throws IOException{
         AddExp();
-        writeGrammer("ConstExp");
+//        writeGrammer("ConstExp");
     }
 }

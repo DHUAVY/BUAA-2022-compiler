@@ -15,19 +15,19 @@ public class VarDecl {
         VarDef.VarDefAnalysis();
 
         while( getWord(poi).type == Token.COMMA){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
             VarDef.VarDefAnalysis();
         }
 
         if( getWord(poi).type == Token.SEMICN ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
         }else{
             WithOutSemiconError.analyse( poi - 1 );
         }
 
-        writeGrammer("VarDecl");
+//        writeGrammer("VarDecl");
 
     }
 }

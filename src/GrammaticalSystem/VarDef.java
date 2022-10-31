@@ -21,11 +21,11 @@ public class VarDef {
 
         while( getWord(poi).type == Token.LBRACK ){
             type += 1;
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
             Expression.ConstExp();
             if( getWord(poi).type == Token.RBRACK ){
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutBracket.analyse(poi-1);
@@ -38,11 +38,11 @@ public class VarDef {
         }
 
         if( getWord(poi).type == Token.ASSIGN ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
             InitVal.InitValAnalysis();
         }
 
-        writeGrammer("VarDef");
+//        writeGrammer("VarDef");
     }
 }

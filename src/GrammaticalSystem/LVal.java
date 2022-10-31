@@ -36,19 +36,19 @@ public class LVal {
 
             dimension ++; // 每多一层'['，代表当前变量的维度减1。
 
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             Expression.Exp();
 
             if( getWord(poi).type == Token.RBRACK ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutBracket.analyse(poi-1);
             }
         }
 
-        writeGrammer("LVal");
+//        writeGrammer("LVal");
         if( !flag ){
             return (sym.type - dimension);
         }else{

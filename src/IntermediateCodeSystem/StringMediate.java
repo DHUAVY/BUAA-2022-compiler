@@ -20,7 +20,7 @@ public class StringMediate {
     }
 
     public static void handleWithStrCon( String str, int poi ) throws IOException {
-        String strRet = "";
+        StringBuilder strRet = new StringBuilder();
         int len = str.length();
         int specialCheck = 0;
         StringHandle strHandle = new StringHandle();
@@ -29,34 +29,38 @@ public class StringMediate {
                 continue;
             }
             if( str.charAt(i) == '%' && i + 1 < str.length() && str.charAt(i+1) == 'd'){
-                strRet = "\"" + strRet + "\\00\""; // \"(1->0), \\00(3->1)
+                strRet.insert( 0, "\""); // \"(1->0), \\00(3->1)
+                strRet.append("\\00\"");
                 specialCheck += 4;
+
                 int strlen = strRet.length()-specialCheck;
                 strHandle.lenthList[strHandle.num] = strlen;
-                strHandle.contentList[strHandle.num++] = StrReg.getFreeStringReg( strlen, strRet );
+                strHandle.contentList[strHandle.num++] = StrReg.getFreeStringReg( strlen, strRet.toString() );
 
                 specialCheck = 0;
                 //TODO 相当于是一个标识位。
 
                 strHandle.lenthList[strHandle.num] = -1;
                 strHandle.contentList[strHandle.num++] = "0";
-                strRet = "";
+                strRet = new StringBuilder();
                 i++;
             }
             else if( str.charAt(i) == '\\' && i + 1 < str.length() && str.charAt(i+1) == 'n'){
-                strRet += "\\0a"; // \\0a(3->1)
+                strRet.append("\\0a"); // \\0a(3->1)
                 specialCheck += 2;
                 i++;
             }
             else{
-                strRet += str.charAt(i);
+                strRet.append(str.charAt(i));
             }
         }
-        strRet = "\"" + strRet + "\\00\""; // \"(1->0), \\00(3->1)
+        strRet.insert( 0, "\""); //  \"(1->0), \\00(3->1)
+        strRet.append("\\00\"");
         specialCheck += 4;
+
         int strlen = strRet.length()-specialCheck;
         strHandle.lenthList[strHandle.num] = strlen;
-        strHandle.contentList[strHandle.num++] = StrReg.getFreeStringReg( strlen, strRet );
+        strHandle.contentList[strHandle.num++] = StrReg.getFreeStringReg( strlen, strRet.toString() );
 
         StringMediate.stringLibrary.put( poi, strHandle );
     }

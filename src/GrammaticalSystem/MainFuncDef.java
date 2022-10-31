@@ -12,17 +12,17 @@ public class MainFuncDef {
         // MainFuncDef → 'int' 'main' '(' ')' Block
         int returnValue = 0;
         if( getWord(poi).type == Token.INTTK ){
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             if( getWord(poi).type == Token.MAINTK ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
                 if( getWord(poi).type == Token.LPARENT ){
-                    writeWord( getWord(poi) );
+                    //writeWord( getWord(poi) );
                     poi++;
 
                     if( getWord(poi).type == Token.RPARENT ){
-                        writeWord( getWord(poi) );
+                        //writeWord( getWord(poi) );
                         poi++;
                     }else{
                         WithOutParenError.analyse(poi-1);
@@ -42,6 +42,6 @@ public class MainFuncDef {
         if( returnValue == 0 ){
             WithOutReturnError.analyse();
         }
-        writeGrammer("MainFuncDef");
+//        writeGrammer("MainFuncDef");
     }
 }

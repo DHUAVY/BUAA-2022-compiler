@@ -329,26 +329,26 @@ public class StmtMediate {
                 }
             }
         }
-        //printIOString( strPoi );
-        for( int i = 0; i < str.length(); i++ ){
-            if( str.charAt(i) == '\"'){
-                continue;
-            }
-            if( str.charAt(i) == '%' && i + 1 < str.length() && str.charAt(i+1) == 'd'){
-                String ioStr = "call void @putint(i32 " + ioList[ioNowPoi++].value + ")";
-                IntermediateCode.writeLlvmIr( ioStr, true);
-                i ++;
-            }
-            else if( str.charAt(i) == '\\' && i + 1 < str.length() && str.charAt(i+1) == 'n'){
-                String ioStr = "call void @putch(i32 " + 10 + ")";
-                IntermediateCode.writeLlvmIr( ioStr, true);
-                i ++;
-            }
-            else{
-                String ioStr = "call void @putch(i32 " + (byte)str.charAt(i) + ")";
-                IntermediateCode.writeLlvmIr( ioStr, true);
-            }
-        }
+        printIOString( strPoi );
+//        for( int i = 0; i < str.length(); i++ ){
+//            if( str.charAt(i) == '\"'){
+//                continue;
+//            }
+//            if( str.charAt(i) == '%' && i + 1 < str.length() && str.charAt(i+1) == 'd'){
+//                String ioStr = "call void @putint(i32 " + ioList[ioNowPoi++].value + ")";
+//                IntermediateCode.writeLlvmIr( ioStr, true);
+//                i ++;
+//            }
+//            else if( str.charAt(i) == '\\' && i + 1 < str.length() && str.charAt(i+1) == 'n'){
+//                String ioStr = "call void @putch(i32 " + 10 + ")";
+//                IntermediateCode.writeLlvmIr( ioStr, true);
+//                i ++;
+//            }
+//            else{
+//                String ioStr = "call void @putch(i32 " + (byte)str.charAt(i) + ")";
+//                IntermediateCode.writeLlvmIr( ioStr, true);
+//            }
+//        }
     }
 
     public static void printIOString( int poi ) throws IOException{

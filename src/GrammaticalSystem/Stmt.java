@@ -59,10 +59,10 @@ public class Stmt {
             if( loopDepth == 0 ){
                 NotInLoopError.analyse(poi);
             }
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             if( getWord(poi).type == Token.SEMICN ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutSemiconError.analyse( poi - 1 );
@@ -73,10 +73,10 @@ public class Stmt {
             if( loopDepth == 0 ){
                 NotInLoopError.analyse(poi);
             }
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             if( getWord(poi).type == Token.SEMICN ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutSemiconError.analyse( poi - 1 );
@@ -86,15 +86,15 @@ public class Stmt {
             // Stmt → 'return' [Exp] ';'
             WithReturnError.lineNumber = getWord(poi).lineNumber; // return的行号
 
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             if( getWord(poi).type == Token.SEMICN ){ // return;
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 Expression.Exp();
                 if( getWord(poi).type == Token.SEMICN ){
-                    writeWord( getWord(poi) );
+                    //writeWord( getWord(poi) );
                     poi++;
                 }else{
                     WithOutSemiconError.analyse( poi - 1 );
@@ -112,7 +112,7 @@ public class Stmt {
         }
         else if( getWord(poi).type == Token.SEMICN ){
             // Stmt → ;
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
         }
         else if( lvalEqualsExpJudge() ){
@@ -121,7 +121,7 @@ public class Stmt {
 
             LVal.Analysis(1);
 
-            writeWord( getWord(poi) ); // =
+            //writeWord( getWord(poi) ); // =
             poi++;
 
             if( getWord(poi).type == Token.GETINTTK ){
@@ -134,33 +134,33 @@ public class Stmt {
             // Stmt → Exp ';'
             Expression.Exp();
             if( getWord(poi).type == Token.SEMICN ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutSemiconError.analyse( poi - 1 );
             }
         }
-        writeGrammer("Stmt");
+//        writeGrammer("Stmt");
         return ret;
     }
 
     public static void handWithGetint() throws IOException {
         // Stmt → LVal '=' 'getint''('')'';'
-        writeWord( getWord(poi) );
+//        writeWord( getWord(poi) );
         poi++;
         if( getWord(poi).type == Token.LPARENT ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
 
             if(  getWord(poi).type != Token.RPARENT ){
                 WithOutParenError.analyse(poi-1);
             }else{
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
             }
 
             if( getWord(poi).type == Token.SEMICN ){
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutSemiconError.analyse( poi - 1 );
@@ -174,7 +174,7 @@ public class Stmt {
         // Stmt → LVal '=' Exp ';'
         Expression.Exp();
         if( getWord(poi).type == Token.SEMICN ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
         }else{
             WithOutSemiconError.analyse( poi - 1 );
@@ -183,24 +183,24 @@ public class Stmt {
 
     public static void handWithIf() throws IOException {
         // Stmt → 'if' '(' Cond ')' Stmt [ 'else' Stmt ]
-        writeWord( getWord(poi) );
+//        writeWord( getWord(poi) );
         poi++;
         if(getWord(poi).type == Token.LPARENT ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
             Cond.analysis(); // Cond
 
             if( getWord(poi).type != Token.RPARENT ){
                 WithOutParenError.analyse( poi - 1 );
             }else{
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
             }
 
             analysis(); // Stmt
 
             if(getWord(poi).type == Token.ELSETK ){
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
                 analysis(); // Stmt
             }
@@ -211,16 +211,16 @@ public class Stmt {
 
     public static void handWithWhile() throws IOException {
         // Stmt → 'while' '(' Cond ')' Stmt
-        writeWord( getWord(poi) );
+//        writeWord( getWord(poi) );
         poi++;
         if(getWord(poi).type == Token.LPARENT ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
             Cond.analysis(); // Cond
             if(getWord(poi).type != Token.RPARENT ){
                 WithOutParenError.analyse( poi - 1 );
             }else{
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
             }
             analysis();
@@ -236,22 +236,22 @@ public class Stmt {
 
         lineNumber = getWord(poi).lineNumber;
 
-        writeWord( getWord(poi) ); // printf
+//        writeWord( getWord(poi) ); // printf
         poi++;
 
         if( getWord(poi).type == Token.LPARENT ){
-            writeWord( getWord(poi) );
+//            writeWord( getWord(poi) );
             poi++;
             if (getWord(poi).type == Token.STRCON ){
 
                 IllegalSymbolError.analyse( getWord(poi) );
                 fc = formatCharacterNum( getWord(poi).token );
 
-                writeWord( getWord(poi) );
+//                writeWord( getWord(poi) );
                 poi++;
 
                 while( getWord(poi).type == Token.COMMA){
-                    writeWord( getWord(poi) );
+//                    writeWord( getWord(poi) );
                     poi++;
                     Expression.Exp();
                     exp ++;
@@ -264,12 +264,12 @@ public class Stmt {
                 if( getWord(poi).type != Token.RPARENT ){
                     WithOutParenError.analyse( poi-1);
                 }else{
-                    writeWord( getWord(poi) );
+//                    writeWord( getWord(poi) );
                     poi++;
                 }
 
                 if (getWord(poi).type == Token.SEMICN ){
-                    writeWord( getWord(poi) );
+//                    writeWord( getWord(poi) );
                     poi++;
                 }else{
                     WithOutSemiconError.analyse( poi - 1 );

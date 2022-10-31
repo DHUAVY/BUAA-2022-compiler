@@ -136,20 +136,20 @@ public class LexicalAnalysis {
 
     public static void writeInFile( String token, int identifyCode, int lineNumber) throws IOException {
 
-        String identify = "";
+//        String identify = "";
         if( notesMode == 1 || token.equals("") || identifyCode == 0){
             return;
         }
         wordList[pop] = new Lexical( token, identifyCode, lineNumber, pop);
         pop++;
-        identify = getToken( identifyCode );
-        if( identify.equals("") ){
-            return;
-        }
-        identify += ' ' + token + ' ' + lineNumber + '\n';
-        if( FileControl.LexicalSystemPrint ){
-            Files.write(Paths.get(fileName), identify.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
-        }
+//        identify = getToken( identifyCode );
+//        if( identify.equals("") ){
+//            return;
+//        }
+//        identify += ' ' + token + ' ' + lineNumber + '\n';
+//        if( FileControl.LexicalSystemPrint ){
+//            Files.write(Paths.get(fileName), identify.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+//        }
     }
 
     public static void wrong(){
@@ -165,7 +165,7 @@ public class LexicalAnalysis {
 
             int status = 0;
             char c = '\0';
-            String token = "";
+            StringBuilder token = new StringBuilder();
 
             do{
                 if( poi >= len ){
@@ -179,26 +179,26 @@ public class LexicalAnalysis {
                     continue;
                 } // 对于当前字符为字母的情况，如果现在处于注释状态下，可以直接跳过。
                 while( Character.isLetter(c) || Character.isDigit(c) || c =='_'){
-                    token += c;
+                    token.append(c);
                     if( poi >= len ){
-                        status = judgeResearve(token);
+                        status = judgeResearve(token.toString());
                         if(  status != -1 ){
-                            writeInFile(token, status, lineNumber);
+                            writeInFile(token.toString(), status, lineNumber);
                         }
                         else{
-                            writeInFile(token, Token.IDENFR, lineNumber);
+                            writeInFile(token.toString(), Token.IDENFR, lineNumber);
                         }
                         return;
                     }
                     c = sentence.charAt(poi++);
                 }
                 poi--;
-                status = judgeResearve(token);
+                status = judgeResearve(token.toString());
                 if(  status != -1 ){
-                    writeInFile(token, status, lineNumber);
+                    writeInFile(token.toString(), status, lineNumber);
                 }
                 else{
-                    writeInFile(token, Token.IDENFR, lineNumber);
+                    writeInFile(token.toString(), Token.IDENFR, lineNumber);
                 }
             }
             else if( Character.isDigit(c) ){
@@ -206,21 +206,21 @@ public class LexicalAnalysis {
                     continue;
                 } // 对于当前字符为数字的情况，如果现在处于注释状态下，可以直接跳过。
                 while( Character.isDigit(c) ){
-                    token += c;
+                    token.append(c);
                     if( poi >= len ){
-                        writeInFile(token, Token.INTCON, lineNumber);
+                        writeInFile(token.toString(), Token.INTCON, lineNumber);
                         return;
                     }
                     c = sentence.charAt(poi++);
                 }
                 poi--;
-                writeInFile(token, Token.INTCON, lineNumber);
+                writeInFile(token.toString(), Token.INTCON, lineNumber);
             }
             else{
                 if( notesMode == 1 && c != '*'){
                     continue;
                 } // 对于当前字符为符号的情况，如果不是*，直接跳过。
-                token += c;
+                token.append(c);
                 switch(c){
                     case '+':
                         status = Token.PLUS;
@@ -292,7 +292,7 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         if( c == '=' ){
-                            token += c;
+                            token.append(c);
                             status = Token.EQL;
                         }
                         else{
@@ -307,7 +307,7 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         if( c == '=' ){
-                            token += c;
+                            token.append(c);
                             status = Token.NEQ;
                         }
                         else{
@@ -322,7 +322,7 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         if( c == '=' ){
-                            token += c;
+                            token.append(c);
                             status = Token.GEQ;
                         }
                         else{
@@ -337,7 +337,7 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         if( c == '=' ){
-                            token += c;
+                            token.append(c);
                             status = Token.LEQ;
                         }
                         else{
@@ -351,7 +351,7 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         if( c == '|' ){
-                            token += c;
+                            token.append(c);
                             status = Token.OR;
                         }
                         else{
@@ -365,7 +365,7 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         if( c == '&' ){
-                            token += c;
+                            token.append(c);
                             status = Token.AND;
                         }
                         else{
@@ -379,11 +379,11 @@ public class LexicalAnalysis {
                         }
                         c = sentence.charAt(poi++);
                         while( poi < len && c != '\"'){
-                            token += c;
+                            token.append(c);
                             c = sentence.charAt(poi++);
                         }
                         if( c == '\"' ){
-                            token += c;
+                            token.append(c);
                             status = Token.STRCON;
                         }else{
                             wrong();
@@ -392,7 +392,7 @@ public class LexicalAnalysis {
                     default:
                         wrong();
                 }
-                writeInFile(token, status, lineNumber);
+                writeInFile(token.toString(), status, lineNumber);
             }
         }
     }

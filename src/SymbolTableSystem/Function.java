@@ -14,27 +14,4 @@ public class Function {
         this.token = token;
     }
 
-    @Override
-    public String toString(){
-
-        String str = "";
-        str += "\n";
-        str += "{";
-        str = "\n" + "{" +
-                "id = " + id + '\n' +
-                "token = " + token + '\n' +
-                "type = " + type + '\n' +
-                "paramNum = " + paramNum + '\n' +
-                "paramList = ";
-
-        for( int i = 0; i < paramNum; i++ ){
-            str += paramList[i];
-            str += " ";
-        }
-        str += "}";
-        str += "\n";
-
-        return str;
-    }
-
 }

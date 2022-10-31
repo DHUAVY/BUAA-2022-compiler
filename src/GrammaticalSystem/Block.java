@@ -19,13 +19,13 @@ public class Block {
         }
 
         if( getWord(poi).type == Token.LBRACE ){ // {
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
             while( getWord(poi).type != Token.RBRACE ){ // 当下一个字符不为'}'时，进入BlockItem
                 ret = BlockItem.analysis();
             }
             WithOutReturnError.lineNumber = getWord(poi).lineNumber;
-            writeWord( getWord(poi) ); // }
+            //writeWord( getWord(poi) ); // }
             poi++;
         }else{
             wrong();
@@ -33,7 +33,7 @@ public class Block {
 
         nowDimension = symbolTableList[nowDimension].fatherId;
 
-        writeGrammer("Block");
+        //writeGrammer("Block");
         return ret;
     }
 }

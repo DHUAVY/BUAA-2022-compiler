@@ -16,13 +16,4 @@ public class Symbol {
         this.dimension = dimension;
     }
 
-    @Override
-    public String toString(){
-        return "{" + '\n' +
-                "id = " + id + '\n' +
-                "dimension = " + dimension + '\n' +
-                "token = " + token + '\n' +
-                "type = " + type + '\n' + '}' + '\n';
-    }
-
 }

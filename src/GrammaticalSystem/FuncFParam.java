@@ -22,11 +22,11 @@ public class FuncFParam {
             FuncDef.nowFuncParamList[FuncDef.nowFuncParamNum] ++; // 每有一次'['表示当前参数的维度加1
 
             type += 1;
-            writeWord( getWord(poi) );
+            //writeWord( getWord(poi) );
             poi++;
 
             if(  getWord(poi).type == Token.RBRACK ){
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
             }else{
                 WithOutBracket.analyse(poi-1);
@@ -37,11 +37,11 @@ public class FuncFParam {
                 FuncDef.nowFuncParamList[FuncDef.nowFuncParamNum] ++; // 每有一次'['表示当前参数的维度加1
 
                 type += 1;
-                writeWord( getWord(poi) );
+                //writeWord( getWord(poi) );
                 poi++;
                 Expression.ConstExp();
                 if( getWord(poi).type == Token.RBRACK ){
-                    writeWord( getWord(poi) );
+                    //writeWord( getWord(poi) );
                     poi++;
                 }else{
                     WithOutBracket.analyse(poi-1);
@@ -54,7 +54,7 @@ public class FuncFParam {
             Ident.identAnalyse( lex, type, 0 );
         }
         
-        writeGrammer("FuncFParam");
+//        writeGrammer("FuncFParam");
     }
 
 }

@@ -10,7 +10,7 @@ public class Cond {
         // Cond → LOrExp
         Expression.LOrExp();
 
-        writeGrammer("Cond");
+        //writeGrammer("Cond");
     }
 
 }

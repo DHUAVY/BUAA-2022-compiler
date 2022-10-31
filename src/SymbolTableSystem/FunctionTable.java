@@ -13,10 +13,4 @@ public class FunctionTable {
         FunctionTable.directory.put( lex.token, newFunction );
     }
 
-    @Override
-    public String toString(){
-        return "This is " + " FunctionTable!" + '\n' +
-                "The HashMap is " + directory + '!' + '\n';
-    }
-
 }
