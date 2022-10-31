@@ -7,12 +7,17 @@ import java.io.IOException;
 import static IntermediateCodeSystem.ExpAnalyse.*;
 import static IntermediateCodeSystem.IntermediateCode.getWordMed;
 import static IntermediateCodeSystem.IntermediateCode.poiMed;
+import static IntermediateCodeSystem.StringMediate.*;
 
 public class CompUnitMediate {
     public static void analysis() throws IOException {
 
+        //TODO 初始化符号表。
         SymbolTableMediate.init();
+        //TODO 填写四个工具函数。
         IOFuncDec();
+        //TODO 生成IO字符串。
+        //initIOString();
 
         //TODO 在定义全局变量时，一定可以求出全部的值。
         mode = varMode;

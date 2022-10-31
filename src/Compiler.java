@@ -1,22 +1,12 @@
 import ErrorHandlingSystem.ErrorHandling;
 import FileController.FileControl;
 import GrammaticalSystem.CompUnit;
-import GrammaticalSystem.FuncDef;
-import GrammaticalSystem.GrammaticalAnalysis;
 import IntermediateCodeSystem.CompUnitMediate;
-import IntermediateCodeSystem.ExpAnalyse;
-import IntermediateCodeSystem.IntermediateCode;
 import LexicalSystem.LexicalAnalysis;
-import SymbolTableSystem.FunctionTable;
-import SymbolTableSystem.Symbol;
 import SymbolTableSystem.SymbolTable;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 public class Compiler {
@@ -44,7 +34,9 @@ public class Compiler {
 //        //TODO Debug模式。
 //        IntermediateCode.writeLlvmIr( text, false );
 
-        CompUnit.analysis();
+        //TODO 如果原文件具有报错，那么不进入代码生成阶段。
+        if( !ErrorHandling.wrong )
+            CompUnit.analysis();
 
         CompUnitMediate.analysis();
     }

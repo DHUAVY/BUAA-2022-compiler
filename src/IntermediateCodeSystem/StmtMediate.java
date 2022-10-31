@@ -8,6 +8,8 @@ import static IntermediateCodeSystem.ExpAnalyse.*;
 import static IntermediateCodeSystem.LoopMediate.*;
 import static IntermediateCodeSystem.IntermediateCode.getWordMed;
 import static IntermediateCodeSystem.IntermediateCode.poiMed;
+import static IntermediateCodeSystem.StringMediate.*;
+import IntermediateCodeSystem.StringHandle;
 
 
 public class StmtMediate {
@@ -306,14 +308,15 @@ public class StmtMediate {
 
     public static void handWithPrintf() throws IOException{
         // Stmt → 'printf''('FormatString{','Exp}')'';'
+        int strPoi = 0;
         String str = "";
         poiMed++;
         if( getWordMed(poiMed).type == Token.LPARENT ){
             poiMed++;
             if (getWordMed(poiMed).type == Token.STRCON ){
-
-                str = getWordMed(poiMed).token;
+                strPoi = poiMed;
                 poiMed++;
+                str = getWordMed(strPoi).token;
                 while( getWordMed(poiMed).type == Token.COMMA){
                     poiMed++;
                     ioList[ ioPoi++ ] = ExpressionMediate.Exp();
@@ -326,6 +329,7 @@ public class StmtMediate {
                 }
             }
         }
+        //printIOString( strPoi );
         for( int i = 0; i < str.length(); i++ ){
             if( str.charAt(i) == '\"'){
                 continue;
@@ -342,6 +346,25 @@ public class StmtMediate {
             }
             else{
                 String ioStr = "call void @putch(i32 " + (byte)str.charAt(i) + ")";
+                IntermediateCode.writeLlvmIr( ioStr, true);
+            }
+        }
+    }
+
+    public static void printIOString( int poi ) throws IOException{
+        StringHandle strHandle = stringLibrary.get( poi );
+        for( int i = 0; i < strHandle.num; i++ ){
+            int len = strHandle.lenthList[i];
+            if( len == -1 ){
+                String ioStr = "call void @putint(i32 " + ioList[ioNowPoi++].value + ")";
+                IntermediateCode.writeLlvmIr( ioStr, true);
+            }
+            else{
+                String reg = TemporaryRegister.getFreeReg();
+                String ioStr = reg + " = getelementptr inbounds [" + len + " x i8], [" + len + " x i8]* " +
+                        strHandle.contentList[i] + ", i32 0, i32 0";
+                IntermediateCode.writeLlvmIr( ioStr, true);
+                ioStr = "call void @putstr(i8* " + reg + ")";
                 IntermediateCode.writeLlvmIr( ioStr, true);
             }
         }
