@@ -47,8 +47,7 @@ public class ConstDefMediate {
         }
 
         if( dim == 2 ){
-            int tran = 0;
-            tran = dim2;
+            int tran = dim2;
             dim2 = dim1;
             dim1 = tran;
         }
@@ -121,7 +120,8 @@ public class ConstDefMediate {
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
 
-                    StringBuilder str = new StringBuilder(reg + " = constant [" + symmed.dim2 + " x i32] [");
+                    //StringBuilder str = new StringBuilder(reg + " = constant [" + symmed.dim2 + " x i32] [");
+                    StringBuilder str = new StringBuilder(reg + " = global [" + symmed.dim2 + " x i32] [");
 
                     for( int i = 0;  i < ConstInitValMediate.numExp; i++ ){
                         str.append("i32 ");
@@ -179,7 +179,8 @@ public class ConstDefMediate {
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
 
-                    StringBuilder str = new StringBuilder(reg + " = constant [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [");
+                    //StringBuilder str = new StringBuilder(reg + " = constant [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [");
+                    StringBuilder str = new StringBuilder(reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [");
                     for( int i = 0, j = 0;  i < ConstInitValMediate.numExp; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i]);
@@ -200,7 +201,7 @@ public class ConstDefMediate {
                         }
                         j ++;
                         j = j % symmed.dim2;
-                        j = j % symmed.dim2;
+                        //j = j % symmed.dim2;
                     }
                     str.append("]]");
                     IntermediateCode.writeGlobalVarDef( str.toString() );

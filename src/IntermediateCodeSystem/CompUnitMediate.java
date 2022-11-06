@@ -14,10 +14,6 @@ public class CompUnitMediate {
 
         //TODO 初始化符号表。
         SymbolTableMediate.init();
-        //TODO 填写四个工具函数。
-        IOFuncDec();
-        //TODO 生成IO字符串。
-        //initIOString();
 
         //TODO 在定义全局变量时，一定可以求出全部的值。
         mode = varMode;

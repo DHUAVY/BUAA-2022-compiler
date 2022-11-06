@@ -151,7 +151,7 @@ public class StmtMediate {
         }
         else if( lvsym.dim == 1 ){
 
-            //symmed.notSafe();
+            symmed.notSafe();
 
             String reg = TemporaryRegister.getFreeReg();
             String str = reg + " = call i32 @getint()";
@@ -175,7 +175,7 @@ public class StmtMediate {
 
         }
         else if( lvsym.dim == 2){
-            //symmed.notSafe();
+            symmed.notSafe();
 
             String reg = TemporaryRegister.getFreeReg();
             String str = reg + " = call i32 @getint()";

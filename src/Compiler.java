@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static IntermediateCodeSystem.CompUnitMediate.IOFuncDec;
+
 public class Compiler {
 
     public static void main(String[] args) throws IOException {
@@ -17,6 +19,8 @@ public class Compiler {
 
         FileControl.fileMake();
         SymbolTable.init(); // 初始化单词表。
+        //TODO 填写四个工具函数。
+        IOFuncDec();
 
         try (Scanner sc = new Scanner( new FileReader(FileControl.inPutFileName) )) {
             while (sc.hasNextLine()) {

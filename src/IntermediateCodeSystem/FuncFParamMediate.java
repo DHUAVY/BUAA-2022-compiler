@@ -29,7 +29,12 @@ public class FuncFParamMediate {
                 while( getWordMed(poiMed).type == Token.LBRACK ){
                     dim++;
                     poiMed++;
+
+                    //TODO:定义函数参数时其中的表达式也不能写入文件.
+                    IntermediateCode.writeInFile = false;
                     expsym = ExpressionMediate.ConstExp();
+                    IntermediateCode.writeInFile = true;
+
                     if( getWordMed(poiMed).type == Token.RBRACK ){
                         poiMed++;
                     }
