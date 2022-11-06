@@ -11,13 +11,13 @@ public class StringMediate {
 
     public static HashMap<Integer, StringHandle> stringLibrary = new HashMap<>();
 
-    public static void initIOString() throws IOException {
-        for( int i = 0; i < pop; i++ ){
-            if( wordList[i].type == STRCON ){
-                handleWithStrCon( wordList[i].token, i );
-            }
-        }
-    }
+//    public static void initIOString() throws IOException {
+//        for( int i = 0; i < pop; i++ ){
+//            if( wordList[i].type == STRCON ){
+//                handleWithStrCon( wordList[i].token, i );
+//            }
+//        }
+//    }
 
     public static void handleWithStrCon( String str, int poi ) throws IOException {
         StringBuilder strRet = new StringBuilder();

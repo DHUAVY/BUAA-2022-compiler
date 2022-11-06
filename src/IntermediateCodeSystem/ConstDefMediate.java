@@ -12,7 +12,6 @@ public class ConstDefMediate {
         // ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal
 
         SymbolMediate symmed;
-        String str = "";
         String ident = "";
         String reg = "";
 
@@ -34,7 +33,7 @@ public class ConstDefMediate {
         while( getWordMed(poiMed).type == Token.LBRACK ){ // {
             dim++;
             poiMed++;
-            str = ExpressionMediate.ConstExp().value;
+            String str = ExpressionMediate.ConstExp().value;
 
             if( dim == 1 ){
                 dim2 = Integer.parseInt( str );
@@ -73,17 +72,17 @@ public class ConstDefMediate {
                     reg = TemporaryRegister.getFreeReg();
                     symmed.reg = reg;
 
-                    str = reg + " = alloca i32";
+                    String str = reg + " = alloca i32";
                     IntermediateCode.writeLlvmIr( str, true);
                     str = "store i32 " + value + ", i32* " + reg;
                     IntermediateCode.writeLlvmIr( str, true);
                 }
                 /*----------------------------全局变量----------------------------*/
                 else{
-                    reg = reg = "@" + symmed.token; // 申请寄存器。
+                    reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg; // 完善符号表。
 
-                    str = reg + " = global i32 " + value;
+                    String str = reg + " = global i32 " + value;
                     IntermediateCode.writeGlobalVarDef( str );
                 }
             }
@@ -92,7 +91,7 @@ public class ConstDefMediate {
                 /*----------------------------一维数组,局部变量----------------------------*/
                 if( nowMediateDimension != 0 ){
                     reg = TemporaryRegister.getFreeReg();
-                    str = reg + " = alloca [" + dim2 + " x i32]";
+                    String str = reg + " = alloca [" + dim2 + " x i32]";
                     IntermediateCode.writeLlvmIr( str, true);
 
                     //TODO 修改为 i32* 的格式。
@@ -122,17 +121,21 @@ public class ConstDefMediate {
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
 
-                    str = reg + " = constant [" + symmed.dim2 + " x i32] [";
+                    StringBuilder str = new StringBuilder(reg + " = constant [" + symmed.dim2 + " x i32] [");
+
                     for( int i = 0;  i < ConstInitValMediate.numExp; i++ ){
-                        str += "i32 " + ConstInitValMediate.initValList[i];
+                        str.append("i32 ");
+                        str.append(ConstInitValMediate.initValList[i]);
+
                         if( i != ConstInitValMediate.numExp - 1 ){
-                            str += ", ";
+                            str.append(", ");
                         }
+
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i] );
                     }
-                    str += "]";
-                    IntermediateCode.writeGlobalVarDef( str );
+                    str.append("]");
+                    IntermediateCode.writeGlobalVarDef( str.toString() );
                 }
             }
             /*----------------------------二维数组----------------------------*/
@@ -141,7 +144,7 @@ public class ConstDefMediate {
                 if( nowMediateDimension != 0 ){
 
                     reg = TemporaryRegister.getFreeReg();
-                    str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
+                    String str = reg + " = alloca [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]]";
                     IntermediateCode.writeLlvmIr( str, true);
 
                     String newReg = TemporaryRegister.getFreeReg(); // newreg
@@ -176,27 +179,31 @@ public class ConstDefMediate {
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
 
-                    str = reg + " = constant [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [";
+                    StringBuilder str = new StringBuilder(reg + " = constant [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [");
                     for( int i = 0, j = 0;  i < ConstInitValMediate.numExp; i++ ){
                         symmed.safeList[i] = true;
                         symmed.valueList[i] = Integer.parseInt( ConstInitValMediate.initValList[i]);
                         if( j == 0 ){
-                            str += "[" + symmed.dim2 + " x i32] [";
+                            str.append("[");
+                            str.append(symmed.dim2);
+                            str.append(" x i32] [");
                         }
-                        str += "i32 " + ConstInitValMediate.initValList[i];
+                        str.append("i32 ");
+                        str.append(ConstInitValMediate.initValList[i]);
                         if( j != symmed.dim2 - 1 ){
                             // 如果j不是当前组的最后一个。
-                            str += ", ";
+                            str.append(", ");
                         }
                         else if( j == symmed.dim2 - 1 && i != ConstInitValMediate.numExp - 1){
                             // 如果j是当前组的最后一个，且当前组不是最后一组。
-                            str += "], ";
+                            str.append("], ");
                         }
                         j ++;
                         j = j % symmed.dim2;
+                        j = j % symmed.dim2;
                     }
-                    str += "]]";
-                    IntermediateCode.writeGlobalVarDef( str );
+                    str.append("]]");
+                    IntermediateCode.writeGlobalVarDef( str.toString() );
                 }
             }
             ConstInitValMediate.numExp = 0;

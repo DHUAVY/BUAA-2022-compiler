@@ -47,8 +47,7 @@ public class VarDefMediate {
         }
 
         if( dim == 2 ){
-            String tran = "0";
-            tran = dim2;
+            String tran = dim2;
             dim2 = dim1;
             dim1 = tran;
         }
@@ -130,19 +129,21 @@ public class VarDefMediate {
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
 
-                    str = reg + " = global [" + symmed.dim2 + " x i32] [";
+                    StringBuilder strbul = new StringBuilder(reg + " = global [" + symmed.dim2 + " x i32] [");
                     for( int i = 0;  i < InitValMediate.numExp; i++ ){
-                        str += "i32 " + InitValMediate.initValList[i].value;
-                        if( i != InitValMediate.numExp - 1 ){
-                            str += ", ";
-                        }
+                        strbul.append("i32 ");
+                        strbul.append(InitValMediate.initValList[i].value);
+
+                        if( i != InitValMediate.numExp - 1 )
+                            strbul.append(", ");
+
                         if( InitValMediate.initValList[i].haveValue ){
                             symmed.safeList[i] = true;
                             symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[i].value );
                         }
                     }
-                    str += "]";
-                    IntermediateCode.writeGlobalVarDef( str );
+                    strbul.append("]");
+                    IntermediateCode.writeGlobalVarDef( strbul.toString() );
                 }
 
             }
@@ -188,29 +189,33 @@ public class VarDefMediate {
                     reg = "@" + symmed.token; // 申请寄存器。
                     symmed.reg = reg;
 
-                    str = reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [";
+                    StringBuilder strbul = new StringBuilder(reg + " = global [" + symmed.dim1 + " x [" + symmed.dim2 + " x i32]] [");
                     for( int i = 0, j = 0;  i < InitValMediate.numExp; i++ ){
                         if( InitValMediate.initValList[i].haveValue ){
                             symmed.safeList[i] = true;
                             symmed.valueList[i] = Integer.parseInt( InitValMediate.initValList[i].value );
                         }
                         if( j == 0 ){
-                            str += "[" + symmed.dim2 + " x i32] [";
+                            strbul.append("[");
+                            strbul.append(symmed.dim2);
+                            strbul.append(" x i32] [");
                         }
-                        str += "i32 " + InitValMediate.initValList[i].value;
+                        strbul.append("i32 ");
+                        strbul.append(InitValMediate.initValList[i].value);
+
                         if( j != symmed.dim2 - 1 ){
                             // 如果j不是当前组的最后一个。
-                            str += ", ";
+                            strbul.append(", ");
                         }
                         else if( j == symmed.dim2 - 1 && i != InitValMediate.numExp - 1){
                             // 如果j是当前组的最后一个，且当前组不是最后一组。
-                            str += "], ";
+                            strbul.append("], ");
                         }
                         j ++;
                         j = j % symmed.dim2;
                     }
-                    str += "]]";
-                    IntermediateCode.writeGlobalVarDef( str );
+                    strbul.append("]]");
+                    IntermediateCode.writeGlobalVarDef( strbul.toString() );
                 }
             }
             InitValMediate.numExp = 0;

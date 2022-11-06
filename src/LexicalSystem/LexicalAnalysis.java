@@ -8,6 +8,8 @@ import java.nio.file.StandardOpenOption;
 import java.io.*;
 import FileController.FileControl;
 
+import static IntermediateCodeSystem.StringMediate.handleWithStrCon;
+
 
 public class LexicalAnalysis {
 
@@ -141,6 +143,9 @@ public class LexicalAnalysis {
             return;
         }
         wordList[pop] = new Lexical( token, identifyCode, lineNumber, pop);
+        if(identifyCode == Token.STRCON){
+            handleWithStrCon(token, pop);
+        }
         pop++;
 //        identify = getToken( identifyCode );
 //        if( identify.equals("") ){
