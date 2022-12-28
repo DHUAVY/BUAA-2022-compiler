@@ -12,12 +12,12 @@ import static IntermediateCodeSystem.StringMediate.*;
 public class CompUnitMediate {
     public static void analysis() throws IOException {
 
-        //TODO 初始化符号表。
+        /*初始化符号表*/
         SymbolTableMediate.init();
 
-        //TODO 在定义全局变量时，一定可以求出全部的值。
+        /*在定义全局变量时，一定可以求出全部的值。*/
         mode = varMode;
-        //TODO 定义变量时，其中的运算表达式，不对文件进行写入。
+        /*定义变量时，其中的运算表达式，不对文件进行写入。*/
         IntermediateCode.writeInFile = false;
         while( (getWordMed(poiMed).type == Token.CONSTTK ||
                 getWordMed(poiMed + 2 ).type != Token.LPARENT) &&

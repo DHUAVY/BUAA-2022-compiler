@@ -13,7 +13,7 @@ public class CondMediate {
         // Cond → LOrExp
         String reg = "";
 
-        //TODO 先存假标签，再存真标签，保持在栈里的位置。
+        /* 先存假标签，再存真标签，保持在栈里的位置。 */
         LabelMediate nextLabel = LabelMediate.getFreeLabel(); // 后续的正常代码
         LabelMediate falseLabel = LabelMediate.getFreeLabel(); // else ... ; 循环体
         LabelMediate trueLabel = LabelMediate.getFreeLabel(); // if ... ; 循环头
