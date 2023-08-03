@@ -48,6 +48,8 @@ public class LexicalAnalysis {
                 return Token.RETURNTK;
             case "void":
                 return Token.VOIDTK;
+            case "for":
+                return Token.FORTK;
             default:
                 return -1;
         }
@@ -131,6 +133,8 @@ public class LexicalAnalysis {
                 return "LBRACE";
             case Token.RBRACE:
                 return "RBRACE";
+            case Token.FORTK:
+                return "FORTK";
             default:
                 return "";
         }
@@ -138,7 +142,7 @@ public class LexicalAnalysis {
 
     public static void writeInFile( String token, int identifyCode, int lineNumber) throws IOException {
 
-//        String identify = "";
+        String identify = "";
         if( notesMode == 1 || token.equals("") || identifyCode == 0){
             return;
         }
@@ -147,14 +151,14 @@ public class LexicalAnalysis {
             handleWithStrCon(token, pop);
         }
         pop++;
-//        identify = getToken( identifyCode );
-//        if( identify.equals("") ){
-//            return;
-//        }
-//        identify += ' ' + token + ' ' + lineNumber + '\n';
-//        if( FileControl.LexicalSystemPrint ){
-//            Files.write(Paths.get(fileName), identify.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
-//        }
+        identify = getToken( identifyCode );
+        if( identify.equals("") ){
+            return;
+        }
+        identify += ' ' + token + ' ' + lineNumber + '\n';
+        if( FileControl.LexicalSystemPrint ){
+            Files.write(Paths.get(fileName), identify.getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+        }
     }
 
     public static void wrong(){
