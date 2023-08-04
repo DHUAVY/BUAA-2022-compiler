@@ -15,11 +15,11 @@ public class FileControl {
     public static String IntermediateCodeSystemFileName = "middle.txt";
     public static String LlvmIrFileName = "llvm_ir.txt";
 
-    public static boolean LexicalSystemPrint = true;
+    public static boolean LexicalSystemPrint = false;
     public static boolean GrammaticalSystemPrint = false;
     public static boolean ErrorHandlingSystemPrint = false;
     public static boolean IntermediateCodeSystemPrint = false;
-    public static boolean LlvmIrFilePrint = false; // 生成LLVM IR代码。
+    public static boolean LlvmIrFilePrint = true; // 生成LLVM IR代码。
 
     public static void fileMake() throws IOException {
         if( LexicalSystemPrint ){

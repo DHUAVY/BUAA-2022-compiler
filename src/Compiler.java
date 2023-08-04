@@ -31,9 +31,9 @@ public class Compiler {
         }
 
         //TODO 如果原文件具有报错，那么不进入代码生成阶段。
-//        if( !ErrorHandling.wrong )
-//            CompUnit.analysis();
-//
-//        CompUnitMediate.analysis();
+        if( !ErrorHandling.wrong )
+            CompUnit.analysis();
+
+        CompUnitMediate.analysis();
     }
 }

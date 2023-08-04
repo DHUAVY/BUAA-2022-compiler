@@ -10,7 +10,7 @@ import static GrammaticalSystem.GrammaticalAnalysis.*;
 
 public class LVal {
 
-    public static int Analysis( int judge ) throws IOException {
+    public static int Analysis( int judge ) throws IOException {    // judge == 1 当前是一个赋值语句，需要检测是否给常量赋值。
         // LVal → Ident {'[' Exp ']'}
         Symbol sym = null;
         int ret = 0;

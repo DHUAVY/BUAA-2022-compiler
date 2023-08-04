@@ -18,18 +18,30 @@ public class CondMediate {
         LabelMediate falseLabel = LabelMediate.getFreeLabel(); // else ... ; 循环体
         LabelMediate trueLabel = LabelMediate.getFreeLabel(); // if ... ; 循环头
 
-        if( type == StmtMediate.WHILE ){
+        if(type == StmtMediate.WHILE || type == StmtMediate.FOR){
             String str = "br label " + trueLabel.reg;
             IntermediateCode.writeLlvmIr( str, true );
             LabelMediate.labelPrint();
             reg = trueLabel.reg;
-            LoopMediate.addLoop( trueLabel.reg, nextLabel.reg );
-        }
-
-        if( type == StmtMediate.WHILE ){
+            LoopMediate.addLoop(trueLabel.reg, nextLabel.reg);
             ExpressionMediate.LOrExp(falseLabel.reg, nextLabel.reg );
         }
-        else if(  type == StmtMediate.IF  ){
+        else if(type == StmtMediate.EMPTY){
+            String str = "br label " + trueLabel.reg;
+            IntermediateCode.writeLlvmIr( str, true );
+            LabelMediate.labelPrint();
+            reg = trueLabel.reg;
+            LoopMediate.addLoop(trueLabel.reg, nextLabel.reg);
+
+            str = "br label " + falseLabel.reg;
+            IntermediateCode.writeLlvmIr( str, true );
+        }
+
+
+//        if( type == StmtMediate.WHILE ){
+//            ExpressionMediate.LOrExp(falseLabel.reg, nextLabel.reg );
+//        }
+        else if(type == StmtMediate.IF){
             ExpressionMediate.LOrExp(trueLabel.reg, falseLabel.reg );
             reg = nextLabel.reg;
         }

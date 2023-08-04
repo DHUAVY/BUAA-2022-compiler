@@ -19,6 +19,7 @@ public class StmtMediate {
     // | Block
     // | 'if' '(' Cond ')' Stmt [ 'else' Stmt ]
     // | 'while' '(' Cond ')' Stmt
+    // | 'for' '(' [forStmt] ';' [Cond] ';' [forStmt] ')' Stmt
     // | 'break' ';'
     // | 'continue' ';'
     // | 'return' [Exp] ';'
@@ -31,6 +32,8 @@ public class StmtMediate {
 
     public final static int IF = 0;
     public final static int WHILE = 1;
+    public final static int FOR = 2;
+    public final static int EMPTY = 3;  // for(;;)
 
     public static boolean lvalEqualsExpJudge() throws IOException {
         int poiMedInit = poiMed;
@@ -61,6 +64,12 @@ public class StmtMediate {
         else if( getWordMed(poiMed).type == Token.WHILETK ){
             // Stmt → 'while' '(' Cond ')' Stmt
             handWithWhile();
+
+            loopTop--; // 当前的循环结束。
+        }
+        else if( getWordMed(poiMed).type == Token.FORTK ){
+            // Stmt -> 'for' '(' [forStmt] ';' [Cond] ';' [forStmt] ')' Stmt
+            handWithFor();
 
             loopTop--; // 当前的循环结束。
         }
@@ -116,7 +125,8 @@ public class StmtMediate {
             // Stmt → LVal '=' Exp ';'
             // Stmt → LVal '=' 'getint''('')'';'
             lvalSym lvsym = LValMediate.analysis();
-            poiMed++;
+
+            poiMed++; // 跳过了'='
 
             if( getWordMed(poiMed).type == Token.GETINTTK ){
                 handWithGetint( lvsym );
@@ -302,6 +312,55 @@ public class StmtMediate {
                 analysis(); // Stmt
                 IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
             }
+        }
+        LabelMediate.labelPrint();
+    }
+
+    public static void handWithFor() throws IOException {
+        // Stmt → 'for' '(' [ForStmt] ';' [Cond] ';' [ForStmt] ')' Stmt
+        String nextReg;
+        poiMed++;
+        if(getWordMed(poiMed).type == Token.LPARENT ){
+            poiMed++;
+
+            if(getWordMed(poiMed).type == Token.SEMICN) poiMed++;
+            else ForStmtMediate.analysis(); // 如果以';'结尾，';'会被吃掉。
+
+            if(getWordMed(poiMed).type == Token.SEMICN) {
+                nextReg = CondMediate.analysis(StmtMediate.EMPTY); // without Cond
+                System.out.println("Without Cond!");
+                poiMed++;
+            }
+            else{
+                nextReg = CondMediate.analysis(StmtMediate.FOR); // Cond
+                if(getWordMed(poiMed).type == Token.SEMICN) poiMed++;
+            }
+
+            if(getWordMed(poiMed).type == Token.RPARENT) {
+                poiMed++;
+                LabelMediate.labelPrint();
+                analysis(); // Stmt
+                IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
+            }
+            else{
+                IntermediateCode.writeInFile = false;   // 关闭文件的写入。
+                int forstmtPoi = poiMed;    // 记录下进入ForStmt时的位置。
+                ForStmtMediate.analysis();  // 执行ForStmt但不写入文件。
+                if(getWordMed(poiMed).type == Token.RPARENT) poiMed++;
+
+                IntermediateCode.writeInFile = true;    // 打开文件的写入。
+                LabelMediate.labelPrint();  // 打印标签。
+
+                analysis(); // 进行Stmt的分析。
+                int finalPoi = poiMed;  // 记录下出Stmt时的位置。
+
+                poiMed = forstmtPoi;    // 复原回当时进入ForStmt时的位置。
+                ForStmtMediate.analysis();
+
+                poiMed = finalPoi;  // 复原回出Stmt时的位置。
+                IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
+            }
+
         }
         LabelMediate.labelPrint();
     }

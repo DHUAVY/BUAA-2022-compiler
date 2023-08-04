@@ -54,6 +54,12 @@ public class Stmt {
             handWithWhile();
             loopDepth --;
         }
+        else if( getWord(poi).type == Token.FORTK ){
+            // Stmt → 'for' '(' [forStmt] ';' [Cond] ';' [forStmt] ')' Stmt
+            loopDepth ++;
+            handWithFor();
+            loopDepth --;
+        }
         else if( getWord(poi).type == Token.BREAKTK ){
             // Stmt → 'break' ';'
             if( loopDepth == 0 ){
@@ -142,6 +148,40 @@ public class Stmt {
         }
 //        writeGrammer("Stmt");
         return ret;
+    }
+
+    private static void handWithFor() throws IOException {
+        // Stmt → 'for' '(' [forStmt] ';' [Cond] ';' [forStmt] ')' Stmt
+//        writeWord( getWord(poi) );
+        poi++;
+        if(getWord(poi).type == Token.LPARENT ){
+//            writeWord( getWord(poi) );
+            poi++;
+
+            // [forStmt] ';'
+            if(getWord(poi).type == Token.SEMICN) poi++;
+            else{
+                int ret = ForStmt.analysis();
+//                if(getWord(poi).type == Token.SEMICN) poi++;
+            }
+
+            // [Cond] ';'
+            if(getWord(poi).type == Token.SEMICN) poi++;
+            else{
+                Cond.analysis();
+                if(getWord(poi).type == Token.SEMICN) poi++;
+            }
+
+            // [forStmt] ')'
+            if(getWord(poi).type == Token.RPARENT) poi++;
+            else{
+                int ret = ForStmt.analysis();
+                if(getWord(poi).type == Token.RPARENT) poi++;
+            }
+
+            analysis();
+
+        }
     }
 
     public static void handWithGetint() throws IOException {

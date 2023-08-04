@@ -40,5 +40,5 @@ public class Token {
     public final static int RBRACK = 36; // ]
     public final static int LBRACE = 37; // {
     public final static int RBRACE = 38; // }
-    public final static int FORTK = 39;
+    public final static int FORTK = 39; // for
 }
