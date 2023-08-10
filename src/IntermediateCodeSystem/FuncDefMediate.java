@@ -8,6 +8,8 @@ import static IntermediateCodeSystem.IntermediateCode.*;
 
 public class FuncDefMediate {
 
+    public static boolean addRet = false;
+
     public static String getFuncType( int type ){
         if( type == 0 )
             return "void";
@@ -63,8 +65,12 @@ public class FuncDefMediate {
             }
         }
         //TODO 如果为 void 类型，需补充ret void
-        if( funcType == 0 ){
+        if(funcType == 0){
             str = "ret void";
+            IntermediateCode.writeLlvmIr( str, true );
+        }
+        else if(funcType == 1){
+            str = "ret i32 0";
             IntermediateCode.writeLlvmIr( str, true );
         }
         str = "}";

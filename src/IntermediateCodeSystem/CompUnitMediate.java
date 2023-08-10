@@ -45,8 +45,8 @@ public class CompUnitMediate {
         IntermediateCode.writeLlvmIr( func, false );
         func = "declare void @putint(i32)";
         IntermediateCode.writeLlvmIr( func, false );
-        func = "declare void @putch(i32)";
-        IntermediateCode.writeLlvmIr( func, false );
+//        func = "declare void @putch(i32)";
+//        IntermediateCode.writeLlvmIr( func, false );
         func = "declare void @putstr(i8*)";
         IntermediateCode.writeLlvmIr( func, false );
 

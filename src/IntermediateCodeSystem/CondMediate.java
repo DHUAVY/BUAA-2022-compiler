@@ -23,7 +23,9 @@ public class CondMediate {
             IntermediateCode.writeLlvmIr( str, true );
             LabelMediate.labelPrint();
             reg = trueLabel.reg;
-            LoopMediate.addLoop(trueLabel.reg, nextLabel.reg);
+
+            LoopMediate.addLoop(trueLabel.reg, nextLabel.reg, type);
+
             ExpressionMediate.LOrExp(falseLabel.reg, nextLabel.reg );
         }
         else if(type == StmtMediate.EMPTY){
@@ -31,16 +33,12 @@ public class CondMediate {
             IntermediateCode.writeLlvmIr( str, true );
             LabelMediate.labelPrint();
             reg = trueLabel.reg;
-            LoopMediate.addLoop(trueLabel.reg, nextLabel.reg);
+
+            LoopMediate.addLoop(trueLabel.reg, nextLabel.reg, type);
 
             str = "br label " + falseLabel.reg;
             IntermediateCode.writeLlvmIr( str, true );
         }
-
-
-//        if( type == StmtMediate.WHILE ){
-//            ExpressionMediate.LOrExp(falseLabel.reg, nextLabel.reg );
-//        }
         else if(type == StmtMediate.IF){
             ExpressionMediate.LOrExp(trueLabel.reg, falseLabel.reg );
             reg = nextLabel.reg;
