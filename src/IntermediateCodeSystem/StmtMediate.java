@@ -89,6 +89,7 @@ public class StmtMediate {
                 poiMed++;
             }
             String str = "";
+            if(loopList[loopTop - 1].ForEnd.equals("null")) return;
             if(loopList[loopTop - 1].type == StmtMediate.WHILE || loopList[loopTop - 1].type == StmtMediate.EMPTY){
                 str = "br label " + loopList[loopTop - 1].loopHead;
             }
@@ -344,38 +345,24 @@ public class StmtMediate {
                 if(getWordMed(poiMed).type == Token.SEMICN) poiMed++;
             }
 
-            if(getWordMed(poiMed).type == Token.RPARENT) {
+            if(getWordMed(poiMed).type == Token.RPARENT) {  // 每一个循环之后没有变化。
                 poiMed++;
+                loopList[loopTop - 1].ForEnd = nextReg;  // 如果没有变化应该直接到条件比较处。
                 LabelMediate.labelPrint();
                 analysis(); // Stmt
                 IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
             }
             else{
-//                IntermediateCode.writeInFile = false;   // 关闭文件的写入。
-//                int forstmtPoi = poiMed;    // 记录下进入ForStmt时的位置。
                 LabelMediate label = LabelMediate.getFreeLabel();   // 获取一个新的label -> 执行最后的ForStmt方便跳转。
                 loopList[loopTop - 1].ForEnd = label.reg;
                 LabelMediate.labelPrint();
-                ForStmtMediate.analysis();  // 执行ForStmt但不写入文件。
+                ForStmtMediate.analysis();
                 if(getWordMed(poiMed).type == Token.RPARENT) poiMed++;
                 IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
 
-//                IntermediateCode.writeInFile = true;    // 打开文件的写入。
                 LabelMediate.labelPrint();  // 打印标签。
 
                 analysis(); // 进行Stmt的分析。
-//                int finalPoi = poiMed;  // 记录下出Stmt时的位置。
-
-//                poiMed = forstmtPoi;    // 复原回当时进入ForStmt时的位置。
-
-//                LabelMediate label = LabelMediate.getFreeLabel();   // 获取一个新的label -> 执行最后的ForStmt方便跳转。
-//                loopList[loopTop - 1].ForEnd = label.reg;
-//                LabelMediate.labelPrint();
-
-//                ForStmtMediate.analysis();
-//
-//                poiMed = finalPoi;  // 复原回出Stmt时的位置。
-//                IntermediateCode.writeLlvmIr("br label "+ nextReg, true);
                 IntermediateCode.writeLlvmIr("br label "+ label.reg, true);
             }
 
